@@ -1,20 +1,25 @@
-
-
 #include "json.h"
 
-std::string JsonValue::displayJsonString(){
-    std::string result;
+std::wstring JsonValue::displayJsonString(){
+    std::wstring result;
     switch (valueType){
         case Int:
-            result = std::to_string(intValue_);
+            result = std::to_wstring(intValue_);
             break;
         case Float:
-            result = std::to_string(floatValue_);
+            result = std::to_wstring(floatValue_);
             break;
         case String:
-            result += "\"";
+            result += L"\"";
             result += strValue_;
-            result += "\"";
+            result += L"\"";
+            break;
+        case JSONOBJ:
+            result = jsonObjValue_->toJsonString();
+            break;
+        case JSONARRAY:
+            result = jsonArrayValue_->toJsonString();
+            break;
         default:
             break;
     }//end switch
@@ -27,10 +32,6 @@ JsonObject::JsonObject(){
 
 void JsonObject::putInt(std::string key , int value){
     mapData_[key] = std::make_shared<JsonValue>(value);
-}
-
-void JsonObject::put(std::string key , int value){
-    putInt(key , value);
 }
 
 int JsonObject::getInt(std::string key){
@@ -46,10 +47,6 @@ void JsonObject::putFloat(std::string key , float value){
     mapData_[key] = std::make_shared<JsonValue>(value);
 }
 
-void JsonObject::put(std::string key , float value){
-    putFloat(key , value);
-}
-
 float JsonObject::getFloat(std::string key){
     std::shared_ptr<JsonValue> value = mapData_[key];
     if(value != nullptr || value->valueType == JsonValueType::Float){
@@ -59,20 +56,16 @@ float JsonObject::getFloat(std::string key){
     }
 }
 
-void JsonObject::putString(std::string key , std::string value){
+void JsonObject::putString(std::string key , std::wstring value){
     mapData_[key] = std::make_shared<JsonValue>(value);
 }
 
-void JsonObject::put(std::string key ,std::string value){
-    putString(key , value);
-}
-
-std::string JsonObject::getString(std::string key){
+std::wstring JsonObject::getString(std::string key){
     std::shared_ptr<JsonValue> value = mapData_[key];
     if(value != nullptr || value->valueType == JsonValueType::String){
         return value->getStringValue();
     }else{
-        return "";
+        return L"";
     }
 }
 
@@ -80,8 +73,8 @@ void JsonObject::putJsonObject(std::string key , std::shared_ptr<JsonObject> val
     mapData_[key] = std::make_shared<JsonValue>(value);
 }
 
-void JsonObject::put(std::string key , std::shared_ptr<JsonObject> value){
-    putJsonObject(key , value);
+void JsonObject::putJsonArray(std::string key , std::shared_ptr<JsonArray> value){
+    mapData_[key] = std::make_shared<JsonValue>(value);
 }
 
 std::shared_ptr<JsonObject> JsonObject::getJsonObject(std::string &key){
@@ -93,45 +86,63 @@ std::shared_ptr<JsonObject> JsonObject::getJsonObject(std::string &key){
     }
 }
 
-
-std::string JsonObject::toJsonString(){
-    std::string jsonString;
-    jsonString += "{";
+std::wstring JsonObject::toJsonString(){
+    std::wstring jsonString;
+    jsonString += L"{";
     int index = 0;
     for(auto &entry : mapData_){
-        jsonString += displayJsonStringValue(entry.first);
-        jsonString += ":";
+        jsonString += displayJsonStringValue(ToWideString(entry.first));
+        jsonString += L":";
+
+        // std::wcout << L"value type: " << entry.second->valueType << std::endl;
+
         jsonString += entry.second->displayJsonString();
 
         if(index < mapData_.size() - 1){
-            jsonString += ",";
+            jsonString += L",";
         }
         index++;
     }//end for each
-    jsonString += "}";
+    jsonString += L"}";
     return jsonString;
 }
 
-std::shared_ptr<JsonObject> JsonObject::toJsonObject(){
-    return nullptr;
-}
-
-void JsonObject::parseJsonString(std::string &jsonStr){
-    
-}
-
-std::string JsonObject::displayJsonStringValue(std::string originValue){
-    std::string result ="";
-    result += "\"";
+std::wstring JsonObject::displayJsonStringValue(std::wstring originValue){
+    std::wstring result = L"";
+    result += L"\"";
     result += originValue;
-    result += "\"";
+    result += L"\"";
     return result;
 }
 
-std::string JsonArray::toJsonString(){
-    return "";
+std::wstring JsonArray::toJsonString(){
+    std::wstring jsonArrayString;
+    jsonArrayString += L"[";
+    int index = 0;
+    for(int i = 0 ; i< arrayData_.size() ;i++){
+        if(i != 0){
+            jsonArrayString += L",";
+        }
+        std::shared_ptr<JsonValue> value = arrayData_[i];
+        jsonArrayString += value->displayJsonString();
+    }//end for i
+
+    jsonArrayString += L"]";
+    return jsonArrayString;
 }
 
-std::shared_ptr<JsonObject> JsonArray::toJsonObject(){
-    return nullptr;
+void JsonArray::pushInt(int value){
+    arrayData_.push_back(std::make_shared<JsonValue>(value));
+}
+
+void JsonArray::pushFloat(float value){
+    arrayData_.push_back(std::make_shared<JsonValue>(value));
+}
+
+void JsonArray::pushString(std::wstring value){
+    arrayData_.push_back(std::make_shared<JsonValue>(value));
+}
+
+void JsonArray::pushJsonObject(std::shared_ptr<JsonObject> value){
+    arrayData_.push_back(std::make_shared<JsonValue>(value));
 }
