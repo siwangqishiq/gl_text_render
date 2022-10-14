@@ -1,15 +1,38 @@
 #include <iostream>
 #include "json.h"
 
-void testJsonObjectPut();
-void testJsonArrayPut();
-
 int main(){
-
-    // testJsonObjectPut();
-    // testJsonArrayPut();
     
     return 0;
+}
+
+void testCursiveParse(){
+    auto person = JsonObject::create();
+    person->put("name" , L"xinyi");
+    person->put("age" , 18);
+    person->put("weight" , 23.33f);
+    auto wife = JsonObject::create();
+    person->put("wife" , wife);
+
+    wife->put("name" , L"maolilan2");
+    wife->put("age" , 28);
+    wife->put("weight" , 23.33f);
+    WriteStringToFile("out.json" , person->toJsonString());
+    
+    JsonObjectParser parser;
+    std::wstring str = ReadTextFileAsWstring("out.json");
+    auto obj = parser.parseJsonObject(str);
+
+    std::wcout << obj->toJsonString() << std::endl;
+
+    std::wcout << obj->getString("name") << std::endl;
+    std::wcout << obj->getFloat("weight") << std::endl;
+    std::wcout << obj->getInt("age") << std::endl;
+
+    auto wife2 = obj->getJsonObject("wife");
+    std::cout << wife2 << std::endl;
+    std::wcout <<"name " << wife2->getString("name") << std::endl;
+    std::wcout << wife2->getInt("age") << std::endl;
 }
 
 void testJsonParse2(){

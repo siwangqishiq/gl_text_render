@@ -77,7 +77,7 @@ void JsonObject::putJsonArray(std::string key , std::shared_ptr<JsonArray> value
     mapData_[key] = std::make_shared<JsonValue>(value);
 }
 
-std::shared_ptr<JsonObject> JsonObject::getJsonObject(std::string &key){
+std::shared_ptr<JsonObject> JsonObject::getJsonObject(std::string key){
     std::shared_ptr<JsonValue> value = mapData_[key];
     if(value != nullptr || value->valueType == JsonValueType::String){
         return value->getJsonObjectValue();
@@ -147,8 +147,9 @@ void JsonArray::pushJsonObject(std::shared_ptr<JsonObject> value){
     arrayData_.push_back(std::make_shared<JsonValue>(value));
 }
 
-int JsonObjectParser::doParseObject(std::wstring &jsonStr){
-    int readIndex = 0;
+int JsonObjectParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
+    // std::cout << "setBegin Pos " << beginPostion << std::endl;
+    int readIndex = beginPostion;
     while(readIndex < jsonStr.size()){
         auto ch = jsonStr[readIndex];
 
@@ -209,7 +210,7 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr){
                     return -1;
             }//end switch
         }else if(state == ParserState::WAIT_VALUE){//等待读取value
-            switch (ch){
+            switch(ch){
                 case L' ':
                 case L'\r':
                 case L'\t':
@@ -219,7 +220,22 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr){
                     state = READ_STRING_VALUE;
                     valueBuf = L"";
                     break;
-                //todo read [ or {
+                case L'{'://子JsonObject
+                    //解析子Object
+                    // readIndex--;//将读取坐标左移一位
+                    {
+                        JsonObjectParser childParser;
+                        if(childParser.doParseObject(jsonStr , readIndex) >= 0){
+                            state = END_READ_VALUE;
+                            if(onReadJsonObjectItem(currentKey ,childParser.currentJsonObject, readIndex, childParser.readEndPosition) < 0){
+                                return -1;
+                            }
+                        }else{
+                            std::cout << "parse child object error" <<std::endl;
+                            return -1;
+                        }
+                    }
+                    break;
                 default:
                     // std::cout << "enter read value state" << std::endl;
                     state = READ_VALUE;
@@ -252,6 +268,7 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr){
                     break;
                 case L'}':
                     state = END;
+                    readEndPosition = readIndex;
                     if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
                         return -1;
                     }
@@ -271,19 +288,48 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr){
                 case L','://
                     state = WAIT_KEY;
                     break;
-                case L'}':
-                    state = END;
-                    if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
-                        return -1;
-                    }
-                    break;
+                // case L'}':
+                //     state = END;
+                //     readEndPosition = readIndex;
+                //     if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
+                //         return -1;
+                //     }
+                //     break;
                 default:
                     break;
             }//end switch
+        } else if(state == ParserState::END){
+            // std::cout << "quit " << readEndPosition << std::endl;
+            return 0;
         }
+        //end if
 
         readIndex++;
     }//end while
+
+    return 0;
+}
+
+int JsonObjectParser::onReadJsonObjectItem(std::wstring &key , 
+        std::shared_ptr<JsonObject> jsonObject , int &position , int offsetPosition){
+    if(currentJsonObject == nullptr){
+        std::cout << "onReadJsonObjectItem parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    if(jsonObject == nullptr){
+        std::cout << "onReadJsonObjectItem parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    //std::wcout << "read json object " << jsonObject->getInt("age") << std::endl; 
+    currentJsonObject->putJsonObject(ToByteString(key) , jsonObject);
+
+    auto wife = currentJsonObject->getJsonObject("wife");
+    std::wcout << "read json object " << wife->getString("name") << std::endl; 
+    std::wcout << "read json object " << wife->getInt("age") << std::endl; 
+
+    position = offsetPosition;
 
     return 0;
 }
@@ -321,7 +367,7 @@ int JsonObjectParser::onReadNumItem(std::wstring &key , std::wstring &value , in
 }
 
 std::shared_ptr<JsonObject> JsonObjectParser::parseJsonObject(std::wstring &jsonStr){
-    if(doParseObject(jsonStr) >= 0){
+    if(doParseObject(jsonStr , 0) >= 0){
         return currentJsonObject;
     }
 

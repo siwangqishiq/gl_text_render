@@ -158,7 +158,7 @@ public:
     int getInt(std::string key);
     float getFloat(std::string key);
     std::wstring getString(std::string key);
-    std::shared_ptr<JsonObject> getJsonObject(std::string &key);
+    std::shared_ptr<JsonObject> getJsonObject(std::string key);
 private:
     std::map<std::string , std::shared_ptr<JsonValue>> mapData_;
 
@@ -236,6 +236,8 @@ public:
     static bool isFloatValue(std::wstring &value){
         return !(value.find(L".") == std::wstring::npos && value.find(L"f") == std::wstring::npos);
     }
+
+    int readEndPosition = -1;
 private:
     ParserState state = INIT;
     std::shared_ptr<JsonObject> currentJsonObject = nullptr;
@@ -245,13 +247,16 @@ private:
 
     std::wstring valueBuf;
 
-    int doParseObject(std::wstring &jsonStr);
+    int doParseObject(std::wstring &jsonStr , int beginPostion);
 
     int createNewJsonObject();
 
     int onReadNumItem(std::wstring &key , std::wstring &value , int &position);
 
     int onReadStringItem(std::wstring &key , std::wstring &value , int &position);
+
+    int onReadJsonObjectItem(std::wstring &key , std::shared_ptr<JsonObject> jsonObject , 
+            int &position , int offsetPosition);
 
     static float strToFloat(std::wstring &str){
         try{
