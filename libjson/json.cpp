@@ -146,3 +146,174 @@ void JsonArray::pushString(std::wstring value){
 void JsonArray::pushJsonObject(std::shared_ptr<JsonObject> value){
     arrayData_.push_back(std::make_shared<JsonValue>(value));
 }
+
+int JsonObjectParser::doParseObject(std::wstring &jsonStr){
+    int readIndex = 0;
+    while(readIndex < jsonStr.size()){
+        auto ch = jsonStr[readIndex];
+
+        // std::wcout << "read :" << ch << std::endl;
+
+        if(state == ParserState::INIT){//初始状态
+            switch (ch){
+                case L'{':
+                    state = WAIT_KEY;
+                    createNewJsonObject();
+                    break;
+                case L' ':
+                case L'\r':
+                case L'\t':
+                case L'\n':
+                    break;
+                default:
+                    std::cout << "parse json error in position " << readIndex << std::endl;
+                    return -1;
+            }//end switch
+        }else if(state == ParserState::WAIT_KEY){//等待读取key
+            switch (ch){
+                case L' ':
+                case L'\r':
+                case L'\t':
+                case L'\n':
+                    break;
+                case L'\"':
+                    state = READ_KEY;
+                    keyBuf = L"";
+                    break;
+                default:
+                    std::cout << "parse json error in position " << readIndex << std::endl;
+                    return -1;
+            }//end switch
+        }else if(state == ParserState::READ_KEY){//解析key
+            switch (ch){
+                case L'\"':
+                    state = END_READ_KEY;
+                    currentKey = keyBuf;
+                    // std::wcout << "read key -> " << currentKey << std::endl;
+                    break;
+                default:
+                    keyBuf += ch;
+                    break;
+            }//end switch
+        }else if(state == ParserState::END_READ_KEY){//等待读到冒号
+            switch (ch){
+                case L' ':
+                case L'\t':
+                case L'\n':
+                    break;
+                case L':':
+                    state = WAIT_VALUE;
+                    break;
+                default:
+                    std::cout << "parse json error in position " << readIndex << std::endl;
+                    return -1;
+            }//end switch
+        }else if(state == ParserState::WAIT_VALUE){//等待读取value
+            switch (ch){
+                case L' ':
+                case L'\r':
+                case L'\t':
+                case L'\n':
+                    break;
+                case L'\"'://value是字符串
+                    state = READ_STRING_VALUE;
+                    valueBuf = L"";
+                    break;
+                //todo read [ or {
+                default:
+                    // std::cout << "enter read value state" << std::endl;
+                    state = READ_VALUE;
+                    valueBuf = ch;
+                    break;
+            }//end switch
+        }else if(state == ParserState::READ_STRING_VALUE){//等待读取value
+            if(ch == L'\"'){
+                state = END_READ_VALUE;
+                if(onReadStringItem(currentKey , valueBuf , readIndex) < 0){
+                    std::cout << "parse json error in position " << readIndex << std::endl;
+                    return -1;
+                }
+            }else{
+                valueBuf += ch;
+            }
+        } else if(state == ParserState::READ_VALUE){ // 读取int or float
+            switch (ch){
+                case L' ':
+                case L'\r':
+                case L'\t':
+                case L'\n':
+                    break;
+                case L','://
+                    state = END_READ_VALUE;
+                    if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
+                        return -1;
+                    }
+                    state = WAIT_KEY;
+                    break;
+                default:
+                    valueBuf += ch;
+                    break;
+            }//end switch
+        } else if(state == ParserState::END_READ_VALUE){
+            switch (ch){
+                case L' ':
+                case L'\r':
+                case L'\t':
+                case L'\n':
+                    break;
+                case L','://
+                    state = WAIT_KEY;
+                    break;
+                case L'}':
+                    state = END;
+                    break;
+                default:
+                    break;
+            }//end switch
+        }
+
+        readIndex++;
+    }//end while
+
+    return 0;
+}
+
+int JsonObjectParser::createNewJsonObject(){
+    currentJsonObject = JsonObject::create();
+    return 0;
+}
+
+int JsonObjectParser::onReadStringItem(std::wstring &key , std::wstring &value , int &position){
+    if(currentJsonObject == nullptr){
+        std::cout << "parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    // std::wcout << key << " = " << value << std::endl;
+    currentJsonObject->putString(ToByteString(key) , value);
+    return 0;
+}
+
+int JsonObjectParser::onReadNumItem(std::wstring &key , std::wstring &value , int &position){
+    if(currentJsonObject == nullptr){
+        std::cout << "parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    //std::wcout << key << " = " << value << std::endl;
+    if(isFloatValue(value)){ //按浮点数据处理
+        currentJsonObject->putFloat(ToByteString(key) , strToFloat(value));
+    }else{ //按整型数据处理
+        currentJsonObject->putInt(ToByteString(key) , strToInt(value));
+    }
+
+    return 0;
+}
+
+std::shared_ptr<JsonObject> JsonObjectParser::parseJsonObject(std::wstring &jsonStr){
+    if(doParseObject(jsonStr) >= 0){
+        return currentJsonObject;
+    }
+
+    return JsonObject::create();
+}

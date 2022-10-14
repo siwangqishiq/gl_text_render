@@ -5,15 +5,28 @@ void testJsonObjectPut();
 void testJsonArrayPut();
 
 int main(){
-    // std::string data = "{\"name\":\"毛利兰\" , \"age\":17}";
+
     // testJsonObjectPut();
-    testJsonArrayPut();
+    // testJsonArrayPut();
+
+
     return 0;
+}
+
+void testJsonParse(){
+    std::wstring data = L"{  \"name\" : \"maolilan   xx \" ,  \"age\":17  , \"count\": 123.333 ,\"desc\":\"xxxxyyyyyzzzzz\"}";
+    JsonObjectParser jsonParser;
+    auto obj = jsonParser.parseJsonObject(data);
+
+    std::wcout << "name = " << obj->getString("name") << std::endl;
+    std::wcout << "age = " << obj->getInt("age") << std::endl;
+    std::wcout << "count = " << obj->getFloat("count") << std::endl;
+    std::wcout << "desc = " << obj->getString("desc") << std::endl;
 }
 
 void testJsonArrayPut(){
     auto jsonArray = JsonArray::create();
-    for(int i = 0;i<10;i++){
+    for(int i = 0; i<10; i++){
         std::wstring str = L"id=";
         str += std::to_wstring(i);
 

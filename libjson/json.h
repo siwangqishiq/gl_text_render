@@ -1,8 +1,7 @@
 //
 // json解析库
 //
-#ifndef __JSON_H__
-#define __JSON_H__
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -217,6 +216,61 @@ private:
     std::vector<std::shared_ptr<JsonValue>> arrayData_;
 };
 
-#endif
+// 解析json字符串
+enum ParserState{
+    INIT,
+    WAIT_KEY,
+    READ_KEY,
+    END_READ_KEY,
+    WAIT_VALUE,
+    READ_STRING_VALUE,
+    READ_VALUE,
+    END_READ_VALUE,
+    END
+};
+
+class JsonObjectParser{
+public:
+    std::shared_ptr<JsonObject> parseJsonObject(std::wstring &jsonStr);
+
+    static bool isFloatValue(std::wstring &value){
+        return !(value.find(L".") == std::wstring::npos && value.find(L"f") == std::wstring::npos);
+    }
+private:
+    ParserState state = INIT;
+    std::shared_ptr<JsonObject> currentJsonObject = nullptr;
+
+    std::wstring keyBuf;
+    std::wstring currentKey;
+
+    std::wstring valueBuf;
+
+    int doParseObject(std::wstring &jsonStr);
+
+    int createNewJsonObject();
+
+    int onReadNumItem(std::wstring &key , std::wstring &value , int &position);
+
+    int onReadStringItem(std::wstring &key , std::wstring &value , int &position);
+
+    static float strToFloat(std::wstring &str){
+        try{
+            return std::stof(ToByteString(str));
+        }catch(std::exception &e){
+            std::wcout << "exception parese " << e.what() << str << std::endl;
+            return 0.0f;
+        }
+    }
+
+    static int strToInt(std::wstring &str){
+        try{
+             return std::stoi(ToByteString(str));
+        }catch(std::exception &e){
+            std::wcout << "exception parese " << e.what() << str << std::endl;
+            return 0.0f;
+        }
+    }
+};
+
 
 
