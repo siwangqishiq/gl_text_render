@@ -218,15 +218,15 @@ private:
 
 // 解析json字符串
 enum ParserState{
-    INIT,
-    WAIT_KEY,
-    READ_KEY,
-    END_READ_KEY,
-    WAIT_VALUE,
-    READ_STRING_VALUE,
-    READ_VALUE,
-    END_READ_VALUE,
-    END
+    INIT = 0,
+    WAIT_KEY = 1,
+    READ_KEY = 2,
+    END_READ_KEY = 3,
+    WAIT_VALUE = 4,
+    READ_STRING_VALUE = 5,
+    READ_VALUE = 6,
+    END_READ_VALUE = 7,
+    END = 20
 };
 
 class JsonObjectParser{

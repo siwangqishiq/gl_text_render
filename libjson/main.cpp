@@ -8,9 +8,19 @@ int main(){
 
     // testJsonObjectPut();
     // testJsonArrayPut();
-
-
+    
     return 0;
+}
+
+void testJsonParse2(){
+    auto content = ReadTextFileAsWstring("test.txt");
+    JsonObjectParser parser;
+    auto obj = parser.parseJsonObject(content);
+    WriteStringToFile("out1.txt" , obj->getString("desc"));
+    WriteStringToFile("out2.txt" , obj->getString("name"));
+
+    std::cout << obj->getFloat("count") << std::endl;
+    std::cout << obj->getFloat("weight") << std::endl;
 }
 
 void testJsonParse(){
