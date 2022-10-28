@@ -2,7 +2,16 @@
 #include "json.h"
 
 int main(){
-    
+    JsonObjectParser parser;
+    std::wstring str = ReadTextFileAsWstring("out.json");
+    // std::wcout << str << std::endl;
+    auto obj = parser.parseJsonObject(str);
+
+    std::wcout << "json:" << obj->toJsonString() << std::endl;
+    auto wife2 = obj->getJsonObject("wife");
+    // std::cout << wife2 << std::endl;
+    // std::wcout <<"name " << wife2->getString("name") << std::endl;
+    // std::wcout << wife2->getInt("age") << std::endl;
     return 0;
 }
 

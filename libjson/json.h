@@ -155,6 +155,10 @@ public:
         putJsonArray(key , value);
     }
 
+    int size(){
+        return mapData_.size();
+    }
+
     int getInt(std::string key);
     float getFloat(std::string key);
     std::wstring getString(std::string key);

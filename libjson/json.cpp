@@ -95,7 +95,6 @@ std::wstring JsonObject::toJsonString(){
         jsonString += L":";
 
         // std::wcout << L"value type: " << entry.second->valueType << std::endl;
-
         jsonString += entry.second->displayJsonString();
 
         if(index < mapData_.size() - 1){
@@ -152,9 +151,8 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
     int readIndex = beginPostion;
     while(readIndex < jsonStr.size()){
         auto ch = jsonStr[readIndex];
-
+        
         // std::wcout << "read :" << ch << " state " << state << std::endl;
-
         if(state == ParserState::INIT){//初始状态
             switch (ch){
                 case L'{':
@@ -267,11 +265,8 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     state = WAIT_KEY;
                     break;
                 case L'}':
-                    state = END;
-                    readEndPosition = readIndex;
-                    if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
-                        return -1;
-                    }
+                    state = END_READ_VALUE;
+                    // readIndex--;
                     break;
                 default:
                     valueBuf += ch;
@@ -288,13 +283,13 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                 case L','://
                     state = WAIT_KEY;
                     break;
-                // case L'}':
-                //     state = END;
-                //     readEndPosition = readIndex;
-                //     if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
-                //         return -1;
-                //     }
-                //     break;
+                case L'}':
+                    state = END;
+                    readEndPosition = readIndex;
+                    // if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
+                    //     return -1;
+                    // }
+                    break;
                 default:
                     break;
             }//end switch
@@ -310,6 +305,50 @@ int JsonObjectParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
     return 0;
 }
 
+int JsonObjectParser::createNewJsonObject(){
+    currentJsonObject = JsonObject::create();
+    return 0;
+}
+
+int JsonObjectParser::onReadStringItem(std::wstring &key , std::wstring &value , int &position){
+    if(currentJsonObject == nullptr){
+        std::cout << "onReadStringItem parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    if(key == L""){
+        return 0;
+    }
+
+    // std::wcout << key << " = " << value << std::endl;
+    currentJsonObject->putString(ToByteString(key) , value);
+
+    key = L"";
+    return 0;
+}
+
+int JsonObjectParser::onReadNumItem(std::wstring &key , std::wstring &value , int &position){
+    if(currentJsonObject == nullptr){
+        std::cout << "onReadNumItem parse json error in position " << position << std::endl;
+        return -1;
+    }
+
+    if(key == L""){
+        return 0;
+    }
+    
+    std::wcout <<"onReadNumItem " << key << " = " << value << std::endl;
+    if(isFloatValue(value)){ //按浮点数据处理
+        currentJsonObject->putFloat(ToByteString(key) , strToFloat(value));
+    }else{ //按整型数据处理
+        currentJsonObject->putInt(ToByteString(key) , strToInt(value));
+    }
+
+    key = L"";
+    std::wcout <<"onReadNumItem currentKey " << currentKey << this << std::endl;
+    return 0;
+}
+
 int JsonObjectParser::onReadJsonObjectItem(std::wstring &key , 
         std::shared_ptr<JsonObject> jsonObject , int &position , int offsetPosition){
     if(currentJsonObject == nullptr){
@@ -322,52 +361,24 @@ int JsonObjectParser::onReadJsonObjectItem(std::wstring &key ,
         return -1;
     }
 
-    //std::wcout << "read json object " << jsonObject->getInt("age") << std::endl; 
+    if(key == L""){
+        return 0;
+    }
+
+    std::wcout <<"onReadJsonObjectItem " << key << " = " << jsonObject->toJsonString() << std::endl;
     currentJsonObject->putJsonObject(ToByteString(key) , jsonObject);
 
-    auto wife = currentJsonObject->getJsonObject("wife");
-    std::wcout << "read json object " << wife->getString("name") << std::endl; 
-    std::wcout << "read json object " << wife->getInt("age") << std::endl; 
-
     position = offsetPosition;
+    key == L"";
 
-    return 0;
-}
-
-int JsonObjectParser::createNewJsonObject(){
-    currentJsonObject = JsonObject::create();
-    return 0;
-}
-
-int JsonObjectParser::onReadStringItem(std::wstring &key , std::wstring &value , int &position){
-    if(currentJsonObject == nullptr){
-        std::cout << "onReadStringItem parse json error in position " << position << std::endl;
-        return -1;
-    }
-
-    // std::wcout << key << " = " << value << std::endl;
-    currentJsonObject->putString(ToByteString(key) , value);
-    return 0;
-}
-
-int JsonObjectParser::onReadNumItem(std::wstring &key , std::wstring &value , int &position){
-    if(currentJsonObject == nullptr){
-        std::cout << "onReadNumItem parse json error in position " << position << std::endl;
-        return -1;
-    }
-    
-    // std::wcout << key << " = " << value << std::endl;
-    if(isFloatValue(value)){ //按浮点数据处理
-        currentJsonObject->putFloat(ToByteString(key) , strToFloat(value));
-    }else{ //按整型数据处理
-        currentJsonObject->putInt(ToByteString(key) , strToInt(value));
-    }
+    std::wcout <<"onReadJsonObjectItem currentKey " << currentKey << this << std::endl;
 
     return 0;
 }
 
 std::shared_ptr<JsonObject> JsonObjectParser::parseJsonObject(std::wstring &jsonStr){
     if(doParseObject(jsonStr , 0) >= 0){
+        std::cout << "map size : " << currentJsonObject->size() <<std::endl;
         return currentJsonObject;
     }
 
