@@ -3,6 +3,9 @@
 //
 #pragma once
 
+#ifndef __JSON_H__
+#define __JSON_H__
+
 #include <iostream>
 #include <fstream>
 #include <codecvt>
@@ -237,6 +240,8 @@ class JsonObjectParser{
 public:
     std::shared_ptr<JsonObject> parseJsonObject(std::wstring &jsonStr);
 
+    std::shared_ptr<JsonArray> parseJsonArray(std::wstring &jsonArrayStr);
+
     static bool isFloatValue(std::wstring &value){
         return !(value.find(L".") == std::wstring::npos && value.find(L"f") == std::wstring::npos);
     }
@@ -282,4 +287,4 @@ private:
 };
 
 
-
+#endif

@@ -32,9 +32,9 @@ public:
         }//end for each
 
         if(successCount == testCases_.size()){
-            std::cout << "ALL PASSED!" << std::endl;
+            std::cout << "SUCCESS! all test case passed!" << std::endl;
         }else{
-            std::cout << "PASSED:" << successCount << " FAILED:" << failedCount << std::endl;
+            std::cout << "ERROR! PASSED:" << successCount << " FAILED:" << failedCount << std::endl;
         }
         return 0;
     }

@@ -322,7 +322,7 @@ int JsonObjectParser::onReadStringItem(std::wstring &key , std::wstring &value ,
 
     // std::wcout << key << " = " << value << std::endl;
     currentJsonObject->putString(ToByteString(key) , value);
-
+    
     key = L"";
     return 0;
 }
@@ -337,7 +337,7 @@ int JsonObjectParser::onReadNumItem(std::wstring &key , std::wstring &value , in
         return 0;
     }
     
-    std::wcout <<"onReadNumItem " << key << " = " << value << std::endl;
+    // std::wcout <<"onReadNumItem " << key << " = " << value << std::endl;
     if(isFloatValue(value)){ //按浮点数据处理
         currentJsonObject->putFloat(ToByteString(key) , strToFloat(value));
     }else{ //按整型数据处理
@@ -384,4 +384,8 @@ std::shared_ptr<JsonObject> JsonObjectParser::parseJsonObject(std::wstring &json
 
     std::cout << "parse json error" << std::endl;
     return JsonObject::create();
+}
+
+std::shared_ptr<JsonArray> JsonObjectParser::parseJsonArray(std::wstring &jsonArrayStr){
+    return nullptr;
 }
