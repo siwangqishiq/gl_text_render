@@ -73,28 +73,10 @@ void testJsonArray(){
     });
 }
 
-std::shared_ptr<JsonObject> buildJsonObject(){
-    auto subJson = JsonObject::create();
-    subJson->put("name" , L"毛利兰");
-    subJson->put("age" , 17);
-    subJson->put("desc" , L"头上有犄角");
-    
-    auto json = JsonObject::create();
-    json->put("friend" , subJson);
-    json->put("socre" , 27);
-    json->put("name" , L"工藤新一");
-    json->put("age" , 18);
-
-    return json;
-}
-
-int main(){
-    testJsonObject();
-    testJsonArray();
-
+void testJsonParse(){
     Test("Test json parse1", [](){
         std::wstring jsonString = L"{  \"name\" : \"maolilan\" ,  \"age\":17  , \"count\": 123.333 ,\"desc\":\"xxxxyyyyyzzzzz\"}";
-        JsonObjectParser parser;
+        JsonParser parser;
         auto json = parser.parseJsonObject(jsonString);
 
         Equal(17 , json->getInt("age"));
@@ -112,27 +94,101 @@ int main(){
 
         auto jsonStr = subJson->toJsonString();
 
-        JsonObjectParser parser;
+        JsonParser parser;
         auto result = parser.parseJsonObject(jsonStr);
         EqualWString(L"头上有犄角" , result->getString("desc"));
         EqualWString(L"毛利兰" , result->getString("name"));
         Equal(17 , result->getInt("age"));
     });
 
-    Test("Test json parse circusive" , [](){
-        auto originJson = buildJsonObject();
+    Test("Test json parse circular" , [](){
+        auto _subJson = JsonObject::create();
+        _subJson->put("name" , L"毛利兰");
+        _subJson->put("age" , 17);
+        _subJson->put("desc" , L"头上有犄角");
+        
+        auto _json = JsonObject::create();
+        _json->put("friend" , _subJson);
+        _json->put("score" , 27);
+        _json->put("name" , L"工藤新一");
+        _json->put("age" , 18);
+        _json->put("score2" , 123456);
+        _json->put("my" , L"HelloWorld");
+
+
+        auto originJson = _json;
         std::wstring jsonStr = originJson->toJsonString();
         WriteStringToFile("out.json" , jsonStr);
         
-        JsonObjectParser parser;
+        JsonParser parser;
         auto json = parser.parseJsonObject(jsonStr);
 
-        Equal(originJson->getInt("age") , json->getInt("age"));
-        Equal(originJson->getInt("score") , json->getInt("score"));
+        auto originWifeJson = originJson->getJsonObject("friend");
+        Equal(originWifeJson->getInt("age") , 17);
 
+        auto wifeJson = json->getJsonObject("friend");
+        Equal(originWifeJson->getInt("age") , wifeJson->getInt("age"));
+        EqualWString(originWifeJson->getString("desc") , wifeJson->getString("desc"));
+        EqualWString(originWifeJson->getString("name") , wifeJson->getString("name"));
+
+
+        Equal(originJson->getInt("age") , json->getInt("age"));
+        // Equal(originJson->getInt("score") , json->getInt("score"));
+        EqualWString(originJson->getString("name") , json->getString("name"));
+    });
+    
+    Test("Test parse json from string" , [](){
+        std::wstring str = L"{\"age\":18,\"friend\":{   \"age\":17,\"desc\":\"头上有犄角\",\"name\":\"毛利兰\"},\"my\":\"HelloWorld\",\"name\":\"工藤新一\",\"score\":27, \"add\":\"test add!!\",\"score2\":123456}";
+
+        // std::wstring str = L"{\"age\":18,\"my\":\"HelloWorld\",\"name\":\"工藤新一\",\"score\":27, \"add\":\"test add!!\",\"score2\":123456}";
+
+        JsonParser parser;
+        auto json = parser.parseJsonObject(str);
+        Equal(18 , json->getInt("age"));
+        Equal(27 , json->getInt("score"));
+        Equal(123456 , json->getInt("score2"));
+        EqualWString(L"test add!!" , json->getString("add"));
+    });
+
+    Test("Test json parse circular2" , [](){
+        auto _subJson = JsonObject::create();
+        _subJson->put("name" , L"毛利兰");
+        _subJson->put("age" , 17);
+        _subJson->put("desc" , L"头上有犄角");
+        
+        auto _json = JsonObject::create();
+        _json->put("wife" , _subJson);
+        _json->put("score" , 27);
+        _json->put("name" , L"工藤新一");
+        _json->put("age" , 18);
+        _json->put("score2" , 123456);
+        _json->put("my" , L"HelloWorld");
+
+
+        auto originJson = _json;
+        std::wstring jsonStr = originJson->toJsonString();
+        WriteStringToFile("out.json" , jsonStr);
+        
+        JsonParser parser;
+        auto json = parser.parseJsonObject(jsonStr);
+
+        auto originWifeJson = originJson->getJsonObject("wife");
+        Equal(originWifeJson->getInt("age") , 17);
 
         auto wifeJson = json->getJsonObject("wife");
+        Equal(originWifeJson->getInt("age") , wifeJson->getInt("age"));
+        EqualWString(originWifeJson->getString("desc") , wifeJson->getString("desc"));
+        EqualWString(originWifeJson->getString("name") , wifeJson->getString("name"));
+
+        Equal(originJson->getInt("age") , json->getInt("age"));
+        EqualWString(originJson->getString("name") , json->getString("name"));
     });
+}
+
+int main(){
+    testJsonObject();
+    testJsonArray();
+    testJsonParse();
 
     utest.testAll();
     return 0;

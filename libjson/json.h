@@ -236,7 +236,7 @@ enum ParserState{
     END = 20
 };
 
-class JsonObjectParser{
+class JsonParser{
 public:
     std::shared_ptr<JsonObject> parseJsonObject(std::wstring &jsonStr);
 
