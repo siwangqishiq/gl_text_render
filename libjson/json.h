@@ -271,7 +271,7 @@ private:
         try{
             return std::stof(ToByteString(str));
         }catch(std::exception &e){
-            std::wcout << "exception parese " << e.what() << str << std::endl;
+            std::wcerr << "exception parese " << e.what() << str << std::endl;
             return 0.0f;
         }
     }
@@ -280,7 +280,7 @@ private:
         try{
              return std::stoi(ToByteString(str));
         }catch(std::exception &e){
-            std::wcout << "exception parese " << e.what() << str << std::endl;
+            std::wcerr << "exception parese " << e.what() << str << std::endl;
             return 0.0f;
         }
     }

@@ -45,6 +45,7 @@ void testJsonObject(){
     });
 }
 
+//json array 
 void testJsonArray(){
     Test("Test JsonArray" ,[](){
         auto jsonArray = JsonArray::create();
@@ -60,6 +61,16 @@ void testJsonArray(){
 
         EqualWString(jsonArray->toJsonString() , L"[1,2,3]");
     });
+
+    Test("Test JsonArray String" , [](){
+        auto jsonArray = JsonArray::create();
+        jsonArray->push(L"你好");
+        jsonArray->push(L"世界");
+        jsonArray->push(L"Hello");
+        jsonArray->push(L"World");
+
+        EqualWString(L"[\"你好\",\"世界\",\"Hello\",\"World\"]" , jsonArray->toJsonString());
+    });
 }
 
 std::shared_ptr<JsonObject> buildJsonObject(){
@@ -69,10 +80,10 @@ std::shared_ptr<JsonObject> buildJsonObject(){
     subJson->put("desc" , L"头上有犄角");
     
     auto json = JsonObject::create();
+    json->put("friend" , subJson);
+    json->put("socre" , 27);
     json->put("name" , L"工藤新一");
     json->put("age" , 18);
-    json->put("wife" , subJson);
-    json->put("socre" , 27);
 
     return json;
 }
@@ -88,6 +99,7 @@ int main(){
 
         Equal(17 , json->getInt("age"));
         Equal(123.333f , json->getFloat("count"));
+        EqualWString(L"maolilan" , json->getString("name"));
     });
 
     Test("Test json parse2", [](){
@@ -110,15 +122,16 @@ int main(){
     Test("Test json parse circusive" , [](){
         auto originJson = buildJsonObject();
         std::wstring jsonStr = originJson->toJsonString();
-
+        WriteStringToFile("out.json" , jsonStr);
+        
         JsonObjectParser parser;
         auto json = parser.parseJsonObject(jsonStr);
-        // WriteStringToFile("out.json" , json->toJsonString());
 
-        auto wifeJson = json->getJsonObject("wife");
+        Equal(originJson->getInt("age") , json->getInt("age"));
         Equal(originJson->getInt("score") , json->getInt("score"));
 
-        
+
+        auto wifeJson = json->getJsonObject("wife");
     });
 
     utest.testAll();
