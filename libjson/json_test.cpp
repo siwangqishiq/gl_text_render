@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
-#include "utest.h"
-#include "json.h"
+#include "utest.hpp"
+#include "json.hpp"
 
 void testJsonObject(){
  Test("Test JsonObject construct" , [](){
         auto json = JsonObject::create();
-        std::wcout << json->toJsonString() << std::endl;
+        // std::wcout << json->toJsonString() << std::endl;
         EqualWString(L"{}" , json->toJsonString());
     });
 
@@ -183,13 +183,123 @@ void testJsonParse(){
         Equal(originJson->getInt("age") , json->getInt("age"));
         EqualWString(originJson->getString("name") , json->getString("name"));
     });
+
+
+    Test("Test json parse circular3" , [](){
+        auto _subJson1 = JsonObject::create();
+        _subJson1->put("name" , L"毛利兰");
+        _subJson1->put("age" , 17);
+        _subJson1->put("desc" , L"头上有犄角");
+
+        auto _subJson2 = JsonObject::create();
+        _subJson2->put("name" , L"毛利兰2");
+        _subJson2->put("age" , 17);
+        _subJson2->put("desc" , L"头上有犄角2");
+        
+        auto _json = JsonObject::create();
+        _json->put("friend1" , _subJson1);
+        _json->put("friend2" , _subJson2);
+        _json->put("my" , L"HelloWorld");
+
+        auto originJson = _json;
+        std::wstring jsonStr = originJson->toJsonString();
+        WriteStringToFile("out.json" , jsonStr);
+        
+        JsonParser parser;
+        auto json = parser.parseJsonObject(jsonStr);
+
+        auto originWifeJson = originJson->getJsonObject("friend2");
+        Equal(originWifeJson->getInt("age") , 17);
+
+        auto wifeJson = json->getJsonObject("friend2");
+        Equal(originWifeJson->getInt("age") , wifeJson->getInt("age"));
+        EqualWString(originWifeJson->getString("desc") , wifeJson->getString("desc"));
+        EqualWString(originWifeJson->getString("name") , wifeJson->getString("name"));
+
+        Equal(originJson->getInt("age") , json->getInt("age"));
+        // Equal(originJson->getInt("score") , json->getInt("score"));
+        EqualWString(originJson->getString("name") , json->getString("name"));
+    });
+}
+
+void testJsonArrayParse(){
+    Test("Test JsonArray parse" , [](){
+        auto _jsonArray = JsonArray::create();
+        _jsonArray->push(L"AAA");
+        _jsonArray->push(L"BBB");
+        _jsonArray->push(L"CCC");
+
+        std::wstring arrayStr = _jsonArray->toJsonString();
+        // std::wcout << arrayStr << std::endl;
+
+        JsonParser parser;
+        auto jsonArray = parser.parseJsonArray(arrayStr);
+
+        EqualWString(L"AAA" , jsonArray->getString(0));
+        EqualWString(L"BBB" , jsonArray->getString(1));
+        EqualWString(L"CCC" , jsonArray->getString(2));
+    });
+
+    Test("Test JsonArray parse2" , [](){
+        auto _jsonArray = JsonArray::create();
+        _jsonArray->push(L"你好");
+        _jsonArray->push(L"世界");
+        _jsonArray->push(L"毛利兰");
+        _jsonArray->push(L"工藤新一");
+
+        std::wstring arrayStr = _jsonArray->toJsonString();
+        // std::wcout << arrayStr << std::endl;
+
+        JsonParser parser;
+        auto jsonArray = parser.parseJsonArray(arrayStr);
+
+        EqualWString(L"你好" , jsonArray->getString(0));
+        EqualWString(L"世界" , jsonArray->getString(1));
+        EqualWString(L"工藤新一" , jsonArray->getString(3));
+        EqualWString(L"毛利兰" , jsonArray->getString(2));
+    });
+
+    Test("Test JsonArray parse int value" , [](){
+        std::wstring str = L"  [ 1,  -2,33,4, 5, 6,  7] ";
+        JsonParser parser;
+        auto jsonArray = parser.parseJsonArray(str);
+
+        Equal(7 , jsonArray->size());
+        
+        Equal(1 , jsonArray->getInt(0));
+        Equal(-2 , jsonArray->getInt(1));
+        Equal(33 , jsonArray->getInt(2));
+        Equal(4 , jsonArray->getInt(3));
+        Equal(5 , jsonArray->getInt(4));
+        Equal(6 , jsonArray->getInt(5));
+        Equal(7 , jsonArray->getInt(6));
+    });
+
+    Test("Test JsonArray parse float value" , [](){
+        auto _json = JsonArray::create();
+        for(int i = 1 ; i <= 200 ; i++){
+            _json->push(i + 0.33f);
+        }//end for i
+
+        JsonParser parser;
+        auto str = _json->toJsonString();
+        auto json = parser.parseJsonArray(str);
+
+        for(int i = 0; i < json->size() ; i++){
+            Equal(_json->getFloat(i) , json->getFloat(i));
+        }//end for i
+    });
 }
 
 int main(){
     testJsonObject();
     testJsonArray();
     testJsonParse();
+    testJsonArrayParse();
 
+    Test("Test JsonArray parse JsonObjet" , [](){
+        
+    });
     utest.testAll();
     return 0;
 }

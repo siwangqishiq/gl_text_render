@@ -19,13 +19,14 @@ public:
         int successCount = 0;
         int failedCount = 0;
         for(auto &entry : testCases_){
-            std::cout << "run : " << entry.first << "\t\t\t";
+            std::cout << "run : " << stringFillWidth(64 , entry.first);
             try{
                 entry.second();
-                std::cout << " [OK]";
+                std::cout << "[OK]";
                 successCount++;
             }catch(std::exception &e){
-                std::cout << " [ERROR!] " << e.what();
+                std::cout << "[ERROR!]"; 
+                std::cout << e.what();
                 failedCount++;
             }
             std::cout << std::endl;
@@ -41,6 +42,19 @@ public:
 
     void addTestCase(std::string name , std::function<void(void)> testFunc){
         testCases_.push_back(std::make_pair(name , testFunc));
+    }
+
+    std::string stringFillWidth(int width , std::string &str){
+        if(str.length() >= width){
+            return str;
+        }
+
+        std::string output = str;
+        int blankCount = width - str.length();
+        for(int i = 0 ; i < blankCount;i++){
+            output += " ";
+        }
+        return output;
     }
 };
 

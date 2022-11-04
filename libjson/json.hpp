@@ -209,8 +209,28 @@ public:
         return arrayData_.size();
     }
 
-    std::shared_ptr<JsonValue> get(int pos){
-        return arrayData_[pos];
+    std::shared_ptr<JsonValue> get(int position){
+        return arrayData_[position];
+    }
+
+    std::shared_ptr<JsonValue> operator[](int position){
+        return get(position);
+    }
+
+    int getInt(int position){
+        return get(position)->getIntValue();
+    }
+
+    float getFloat(int position){
+        return get(position)->getFloatValue();
+    }
+
+    std::wstring getString(int position){
+        return get(position)->getStringValue();
+    }
+
+    std::shared_ptr<JsonObject> getJsonObject(int position){
+        return get(position)->getJsonObjectValue();
     }
 
     void pushInt(int value);
@@ -233,7 +253,13 @@ enum ParserState{
     READ_STRING_VALUE = 5,
     READ_VALUE = 6,
     END_READ_VALUE = 7,
-    END = 20
+
+    WAIT_ARRAY_VALUE = 8,
+    READ_ARRAY_VALUE = 9,
+    READ_ARRAY_STRING_VALUE = 10,
+    END_READ_ARRAY_VALUE = 11,
+
+    END = 400
 };
 
 class JsonParser{
@@ -249,7 +275,9 @@ public:
     int readEndPosition = -1;
 private:
     ParserState state = INIT;
+
     std::shared_ptr<JsonObject> currentJsonObject = nullptr;
+    std::shared_ptr<JsonArray> currentJsonArray = nullptr;
 
     std::wstring keyBuf;
     std::wstring currentKey;
@@ -259,6 +287,12 @@ private:
     int doParseObject(std::wstring &jsonStr , int beginPostion);
 
     int createNewJsonObject();
+
+    int createNewJsonArray();
+
+    int onReadArrayStringItem(std::wstring &value , int &position);
+
+    int onReadArrayNumItem(std::wstring &value ,int &position);
 
     int onReadNumItem(std::wstring &key , std::wstring &value , int &position);
 
