@@ -163,9 +163,14 @@ public:
     }
 
     int getInt(std::string key);
+    
     float getFloat(std::string key);
+
     std::wstring getString(std::string key);
+
     std::shared_ptr<JsonObject> getJsonObject(std::string key);
+
+    std::shared_ptr<JsonArray> getJsonArray(std::string key);
 private:
     std::map<std::string , std::shared_ptr<JsonValue>> mapData_;
 
@@ -294,12 +299,18 @@ private:
 
     int onReadArrayNumItem(std::wstring &value ,int &position);
 
+    int onReadArrayJsonObjectItem(std::shared_ptr<JsonObject> jsonObject , 
+            int &position , int offsetPosition);
+
     int onReadNumItem(std::wstring &key , std::wstring &value , int &position);
 
     int onReadStringItem(std::wstring &key , std::wstring &value , int &position);
 
     int onReadJsonObjectItem(std::wstring &key , std::shared_ptr<JsonObject> jsonObject , 
             int &position , int offsetPosition);
+
+    int onReadJsonArrayItem(std::wstring &key ,
+        std::shared_ptr<JsonArray>  jsonArray, int &position , int offsetPosition);
 
     static float strToFloat(std::wstring &str){
         try{

@@ -289,6 +289,104 @@ void testJsonArrayParse(){
             Equal(_json->getFloat(i) , json->getFloat(i));
         }//end for i
     });
+
+    Test("Test JsonArray parse JsonObject" , [](){
+        auto _json1 = JsonObject::create();
+        _json1->put("name" , L"maolilan");
+        _json1->put("age" , 17);
+        auto _json2 = JsonObject::create();
+        _json2->put("name" , L"xinyi");
+        _json2->put("age" , 18);
+        auto _json3 = JsonObject::create();
+        _json3->put("name" , L"huiyuanai");
+        _json3->put("age" , 19);
+
+        std::shared_ptr<JsonArray> _jsonArray = JsonArray::create();
+        _jsonArray->push(_json1);
+        _jsonArray->push(_json2);
+        _jsonArray->push(_json3);
+
+        // WriteStringToFile("out.json" , _jsonArray->toJsonString());
+
+        std::wstring str = _jsonArray->toJsonString();
+        JsonParser parser;
+        auto jsonArray = parser.parseJsonArray(str);
+
+        Equal(3 , jsonArray->size());
+        auto json1 = jsonArray->getJsonObject(0);
+        auto json2 = jsonArray->getJsonObject(1);
+        auto json3 = jsonArray->getJsonObject(2);
+
+        Equal(_json1->getInt("age") , json1->getInt("age"));
+        Equal(_json2->getInt("age") , json2->getInt("age"));
+        Equal(_json3->getInt("age") , json3->getInt("age"));
+        EqualWString(_json1->getString("name") , json1->getString("name"));
+        EqualWString(_json2->getString("name") , json2->getString("name"));
+        EqualWString(_json3->getString("name") , json3->getString("name"));
+    });
+
+    Test("Test JsonArray parse from string" , [](){
+        std::wstring str = L"[   {\"age\":17 , \"name\":\"maolilan\"} ,{\"age\":18,\"name\":\"xinyi\"}, {\"age\":19,\"name\":\"huiyuanai2\"}]";
+
+        JsonParser parser;
+        auto jsonArray = parser.parseJsonArray(str);
+
+        Equal(3 , jsonArray->size());
+        auto json1 = jsonArray->getJsonObject(0);
+        auto json2 = jsonArray->getJsonObject(1);
+        auto json3 = jsonArray->getJsonObject(2);
+
+        Equal(17 , json1->getInt("age"));
+        Equal(18 , json2->getInt("age"));
+        Equal(19 , json3->getInt("age"));
+        EqualWString(L"maolilan", json1->getString("name"));
+        EqualWString(L"xinyi", json2->getString("name"));
+        EqualWString(L"huiyuanai2", json3->getString("name"));
+    });
+
+    Test("Test json object contain jsonarray" , [](){
+        auto _json1 = JsonObject::create();
+        _json1->put("name" , L"maolilan");
+        _json1->put("age" , 17);
+        auto _json2 = JsonObject::create();
+        _json2->put("name" , L"xinyi");
+        _json2->put("age" , 18);
+        auto _json3 = JsonObject::create();
+        _json3->put("name" , L"huiyuanai");
+        _json3->put("age" , 19);
+
+        std::shared_ptr<JsonArray> _jsonArray = JsonArray::create();
+        _jsonArray->push(_json1);
+        _jsonArray->push(_json2);
+        _jsonArray->push(_json3);
+
+        auto _json = JsonObject::create();
+        _json->putString("name" , L"Hello");
+        _json->putInt("id" , 1001);
+        _json->putJsonArray("friends" , _jsonArray);
+
+        WriteStringToFile("out.json" , _json->toJsonString());
+        JsonParser parser;
+        auto str = _json->toJsonString();
+        auto json = parser.parseJsonObject(str);
+
+        EqualWString(_json->getString("name") , json->getString("name"));
+        Equal(_json->getInt("age") , json->getInt("age"));
+
+        std::shared_ptr<JsonArray> friendJsonArray = json->getJsonArray("friends");
+        Equal(_jsonArray->size() , friendJsonArray->size());
+
+        auto json1 = friendJsonArray->getJsonObject(0);
+        auto json2 = friendJsonArray->getJsonObject(1);
+        auto json3 = friendJsonArray->getJsonObject(2);
+
+        Equal(_json1->getInt("age") , json1->getInt("age"));
+        Equal(_json2->getInt("age") , json2->getInt("age"));
+        Equal(_json3->getInt("age") , json3->getInt("age"));
+        EqualWString(_json1->getString("name") , json1->getString("name"));
+        EqualWString(_json2->getString("name") , json2->getString("name"));
+        EqualWString(_json3->getString("name") , json3->getString("name"));
+    });
 }
 
 int main(){
@@ -297,9 +395,6 @@ int main(){
     testJsonParse();
     testJsonArrayParse();
 
-    Test("Test JsonArray parse JsonObjet" , [](){
-        
-    });
     utest.testAll();
     return 0;
 }

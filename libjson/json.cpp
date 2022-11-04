@@ -86,6 +86,15 @@ std::shared_ptr<JsonObject> JsonObject::getJsonObject(std::string key){
     }
 }
 
+std::shared_ptr<JsonArray> JsonObject::getJsonArray(std::string key) {
+    std::shared_ptr<JsonValue> value = mapData_[key];
+    if(value != nullptr && value->valueType == JsonValueType::JSONARRAY){
+        return value->getJsonArrayValue();
+    }else{
+        return nullptr;
+    }
+}
+
 std::wstring JsonObject::toJsonString(){
     std::wstring jsonString;
     jsonString += L"{";
@@ -224,10 +233,12 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     valueBuf = L"";
                     break;
                 case L'{'://子JsonObject
-                    //解析子Object
                     {
                         JsonParser childParser;
-                        if(childParser.doParseObject(jsonStr , readIndex) >= 0){
+                        if(childParser.doParseObject(jsonStr , readIndex) < 0){
+                            std::cerr << "parse child object error" <<std::endl;
+                            return -1;
+                        }else{
                             state = END_READ_VALUE;
                             if(onReadJsonObjectItem(currentKey 
                                 , childParser.currentJsonObject
@@ -235,9 +246,23 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                                 , childParser.readEndPosition) < 0){
                                 return -1;
                             }
-                        }else{
-                            std::cerr << "parse child object error" <<std::endl;
+                        }
+                    }
+                    break;
+                case L'[':
+                    {
+                        //parse sub jsonarray
+                        JsonParser childParser;
+                        // std::cout << "start parse sub json array" << std::endl;
+                        if(childParser.doParseObject(jsonStr , readIndex) < 0){
+                            std::cerr << "parse child array object error" <<std::endl;
                             return -1;
+                        }else{
+                            state = END_READ_VALUE;
+                            if(onReadJsonArrayItem(currentKey,childParser.currentJsonArray
+                                , readIndex, childParser.readEndPosition) < 0){
+                                return -1;
+                            }
                         }
                     }
                     break;
@@ -299,7 +324,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                 default:
                     break;
             }//end switch
-        } else if(state == ParserState::WAIT_ARRAY_VALUE){ //array解析 
+        } else if(state == ParserState::WAIT_ARRAY_VALUE){ //json array parse 
             // std::cout << "WAIT ARRAY VALUE " << readIndex << std::endl;
             switch (ch){
                 case L' ':
@@ -310,6 +335,23 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                 case L'\"':
                     state = READ_ARRAY_STRING_VALUE;
                     valueBuf = L"";
+                    break;
+                case L'{': //[{...} , {...}]
+                    {
+                        JsonParser childParser;
+                        if(childParser.doParseObject(jsonStr , readIndex) >= 0){
+                            state = END_READ_ARRAY_VALUE;
+                            if(onReadArrayJsonObjectItem(childParser.currentJsonObject
+                                , readIndex
+                                , childParser.readEndPosition) < 0){
+                                std::cerr << "json array parse error " << readIndex << std::endl;
+                                return -1;
+                            }
+                        }else{
+                            std::cerr << "jsonarray parse child object error" <<std::endl;
+                            return -1;
+                        }
+                    }
                     break;
                 default:
                     state = READ_ARRAY_VALUE;
@@ -357,6 +399,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     break;
                 case L']':
                     state = ParserState::END;
+                    readEndPosition = readIndex;
                     break;
                 default:
                     break;
@@ -464,6 +507,32 @@ int JsonParser::onReadNumItem(std::wstring &key , std::wstring &value , int &pos
     return 0;
 }
 
+int JsonParser::onReadJsonArrayItem(std::wstring &key ,
+        std::shared_ptr<JsonArray>  jsonArray, int &position , int offsetPosition){
+    if(currentJsonObject == nullptr){
+        std::cerr << "onReadJsonArrayItem parse json error in position " 
+            << position << std::endl;
+        return -1;
+    }
+
+    if(jsonArray == nullptr){
+        std::cerr << "onReadJsonArrayItem parse json error in position " 
+            << position << std::endl;
+        return -1;
+    }
+
+    if(key == L""){
+        return 0;
+    }
+
+    currentJsonObject->putJsonArray(ToByteString(key) , jsonArray);
+
+    position = offsetPosition;
+    key == L"";
+
+    return 0;
+}
+
 int JsonParser::onReadJsonObjectItem(std::wstring &key , 
         std::shared_ptr<JsonObject> jsonObject , int &position , int offsetPosition){
     if(currentJsonObject == nullptr){
@@ -487,6 +556,23 @@ int JsonParser::onReadJsonObjectItem(std::wstring &key ,
     key == L"";
 
     // std::wcout <<"onReadJsonObjectItem currentKey " << currentKey << this << std::endl;
+    return 0;
+}
+
+int JsonParser::onReadArrayJsonObjectItem(std::shared_ptr<JsonObject> jsonObject, 
+        int &position , int offsetPosition){
+    if(currentJsonArray == nullptr){
+        std::cerr << "parse json array error position " << position << std::endl; 
+        return -1;
+    }
+
+    if(jsonObject == nullptr){
+        std::cerr << "parse json array error position " << position << std::endl; 
+        return -1;
+    }
+
+    currentJsonArray->pushJsonObject(jsonObject);
+    position = offsetPosition;
     return 0;
 }
 
