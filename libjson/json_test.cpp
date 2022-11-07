@@ -4,7 +4,7 @@
 #include "json.hpp"
 
 void testJsonObject(){
- Test("Test JsonObject construct" , [](){
+    Test("Test JsonObject construct" , [](){
         auto json = JsonObject::create();
         // std::wcout << json->toJsonString() << std::endl;
         EqualWString(L"{}" , json->toJsonString());
@@ -179,7 +179,7 @@ void testJsonParse(){
         Equal(originWifeJson->getInt("age") , wifeJson->getInt("age"));
         EqualWString(originWifeJson->getString("desc") , wifeJson->getString("desc"));
         EqualWString(originWifeJson->getString("name") , wifeJson->getString("name"));
-
+        
         Equal(originJson->getInt("age") , json->getInt("age"));
         EqualWString(originJson->getString("name") , json->getString("name"));
     });

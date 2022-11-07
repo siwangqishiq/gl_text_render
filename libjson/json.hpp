@@ -308,7 +308,7 @@ private:
 
     int onReadJsonObjectItem(std::wstring &key , std::shared_ptr<JsonObject> jsonObject , 
             int &position , int offsetPosition);
-
+    
     int onReadJsonArrayItem(std::wstring &key ,
         std::shared_ptr<JsonArray>  jsonArray, int &position , int offsetPosition);
 
