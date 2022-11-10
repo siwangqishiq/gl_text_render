@@ -323,7 +323,8 @@ private:
 
     static int strToInt(std::wstring &str){
         try{
-             return std::stoi(ToByteString(str));
+            // std::wcout << str << std::endl;
+            return std::stoi(ToByteString(str));
         }catch(std::exception &e){
             std::wcerr << "exception parese " << e.what() << str << std::endl;
             return 0.0f;

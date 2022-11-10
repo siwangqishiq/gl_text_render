@@ -389,11 +389,39 @@ void testJsonArrayParse(){
     });
 }
 
+void testFixBug1(){
+    Test("object contain list" , [](){
+        auto _obj = JsonObject::create();
+        auto _list = JsonArray::create();
+        _obj->putJsonArray("list" , _list);
+
+        for(int i = 0; i < 5 ;i++){
+            auto _item = JsonObject::create();
+            _item->putString("value" , L"X");
+            _item->putInt("width" , 100);
+            _item->putInt("height" , 200);
+            _item->putString("texture" , L"test.png");
+
+            _list->pushJsonObject(_item);
+        }//end for i
+
+        std::wstring str = _obj->toJsonString();
+
+        WriteStringToFile("out.json" , str);
+
+        JsonParser parser;
+        auto json = parser.parseJsonObject(str);
+        auto array = json->getJsonArray("list");
+        Equal(5 , array->size());
+    });
+}
+
 int main(){
     testJsonObject();
     testJsonArray();
     testJsonParse();
     testJsonArrayParse();
+    testFixBug1();
 
     utest.testAll();
     return 0;

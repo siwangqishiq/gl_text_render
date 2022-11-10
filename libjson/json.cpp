@@ -300,6 +300,9 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     state = END_READ_VALUE;
                     if(onReadNumItem(currentKey , valueBuf , readIndex) < 0){
                         return -1;
+                    }else{
+                        readEndPosition = readIndex;
+                        return 0;
                     }
                     break;
                 default:
@@ -352,6 +355,10 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                             return -1;
                         }
                     }
+                    break;
+                case L']':
+                    state = ParserState::END;
+                    readEndPosition = readIndex;
                     break;
                 default:
                     state = READ_ARRAY_VALUE;

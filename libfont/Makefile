@@ -9,7 +9,10 @@ build_dir:
 	mkdir -p ${BUILD_DIR}
 
 compile: build_dir \
-		${BUILD_DIR}/main.o 
+		${BUILD_DIR}/main.o ${BUILD_DIR}/json.o
+
+${BUILD_DIR}/json.o:
+	${CC} -std=${STD} -c ../libjson/json.cpp -o ${BUILD_DIR}/json.o
 
 ${BUILD_DIR}/main.o:${SRC_DIR}/main.cc
 	${CC} -std=${STD} -c ${SRC_DIR}/main.cc -o ${BUILD_DIR}/main.o -I .
@@ -23,3 +26,4 @@ build_font:link
 clean:
 	rm -f ${BUILD_DIR}/*.o 
 	rm -f ${BUILD_DIR}/main.exe
+	rm -f *.png
