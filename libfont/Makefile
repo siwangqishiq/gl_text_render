@@ -27,3 +27,4 @@ clean:
 	rm -f ${BUILD_DIR}/*.o 
 	rm -f ${BUILD_DIR}/main.exe
 	rm -f *.png
+	rm -f *.json

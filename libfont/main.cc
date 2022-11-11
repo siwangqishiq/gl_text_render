@@ -61,13 +61,13 @@ int exportFonts(){
     outputJson->putJsonArray("list" , charListArray);
 
     std::wstring content = ReadTextFileAsWstring("chars.txt");
-    // std::wstring content = L"`1234567890~!@#$%^&*()_+-=[]{};',.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // std::wstring content = L"abc";
     std::cout << "char file size : " << content.length() << std::endl;
 
-    const int texWidth = 2048;
-    const int texHeight = 2048;
+    const int outTexWidth = 2048;
+    const int outTexHeight = 2048;
 
-    uint32_t *textureDst = new uint32_t[texWidth * texHeight];
+    uint32_t *textureDst = new uint32_t[outTexWidth * outTexHeight];
 
     int left = 0;
     int top = 0;
@@ -86,7 +86,7 @@ int exportFonts(){
             continue;
         }
 
-        std::wcout << "left" << left << "  top " << top << std::endl;
+        std::wcout << "left " << left << "  top " << top << std::endl;
 
         if (FT_Load_Char(face, ch, FT_LOAD_RENDER)){
             std::wcout<< ch << " ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
@@ -109,7 +109,7 @@ int exportFonts(){
             left ,
             top + topOffset , 
             fontWidth , 
-            fontHeight , texWidth);
+            fontHeight , outTexWidth);
 
         auto charInfoJson = JsonObject::create();
         std::wstring value = L"";
@@ -119,20 +119,29 @@ int exportFonts(){
         charInfoJson->putInt("height" , fontHeight);
         charInfoJson->putString("texture" , ToWideString(currentTexFileName));
         //纹理坐标计算
-        float texLeft = (float)left;
-        float texTop = (float)top;
+        float texLeft = (float)left / (float)outTexWidth;
+        float texTop = (float)top / (float)outTexHeight;
+        float texWidth = (float)fontWidth / (float)outTexWidth;
+        float texHeight = (float)fontHeight / (float)outTexHeight;
+
+        auto texCoords = JsonArray::create();
+        texCoords->pushFloat(texLeft);
+        texCoords->pushFloat(texTop);
+        texCoords->pushFloat(texLeft + texWidth);
+        texCoords->pushFloat(texTop + texHeight);
+        charInfoJson->putJsonArray("texCoords" , texCoords);
         
         charListArray->pushJsonObject(charInfoJson);
 
-        if(left + fontSize > texWidth){
+        if(left + fontSize > outTexWidth){
             left = 0;
-            if(top + fontSize > texHeight - fontSize){
+            if(top + fontSize > outTexHeight - fontSize){
                 std::cout << "need create a new texture file" << std::endl;
-                stbi_write_png(currentTexFileName.c_str() , texWidth, texHeight, 4 , textureDst , 0);
+                stbi_write_png(currentTexFileName.c_str() , outTexWidth, outTexHeight, 4 , textureDst , 0);
                 delete []textureDst;
                 top = 0;
 
-                textureDst = new uint32_t[texWidth * texHeight];
+                textureDst = new uint32_t[outTexWidth * outTexHeight];
                 currentFileIndex++;
                 currentTexFileName = "font_texture_"+std::to_string(currentFileIndex)+".png";
                 std::cout << "create new texture file " << currentFileIndex << std::endl;
@@ -144,7 +153,7 @@ int exportFonts(){
         }
     }//end for each
 
-    stbi_write_png(currentTexFileName.c_str() , texWidth, texHeight, 4 , textureDst , 0);
+    stbi_write_png(currentTexFileName.c_str() , outTexWidth, outTexHeight, 4 , textureDst , 0);
     delete []textureDst;
 
     WriteStringToFile("char_config.json", outputJson->toJsonString());
@@ -154,7 +163,7 @@ int exportFonts(){
     auto result = parser.parseJsonObject(str);
     auto charList = result->getJsonArray("list");
 
-    std::wcout << "total size " << charList->size() << std::endl;
+    std::wcout << "total size " << charListArray->size() << std::endl;
 
     return 0;
 }

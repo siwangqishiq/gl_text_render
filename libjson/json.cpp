@@ -162,7 +162,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
     while(readIndex < jsonStr.size()){
         auto ch = jsonStr[readIndex];
         
-        // std::wcout << "read :" << ch << " state " << state << std::endl;
+        // std::wcout << "read :" << ch << " state " << state << " read index " << readIndex << std::endl;
         if(state == ParserState::INIT){//初始状态
             switch (ch){
                 case L'{':
@@ -231,10 +231,12 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                 case L'\"'://value是字符串
                     state = READ_STRING_VALUE;
                     valueBuf = L"";
+                    // std::cout << this << "? state READ_STRING_VALUE "<< readIndex << std::endl;
                     break;
                 case L'{'://子JsonObject
                     {
                         JsonParser childParser;
+                        // std::cout << ":: doParseObject childParser" << std::endl;
                         if(childParser.doParseObject(jsonStr , readIndex) < 0){
                             std::cerr << "parse child object error" <<std::endl;
                             return -1;
@@ -247,6 +249,8 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                                 return -1;
                             }
                         }
+
+                        // std::cout << ":: doParseObject" << std::endl;
                     }
                     break;
                 case L'[':
@@ -273,6 +277,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     break;
             }//end switch
         }else if(state == ParserState::READ_STRING_VALUE){//等待读取value
+            // std::wcout << "READ_STRING_VALUE "<< this << std::endl;
             if(ch == L'\"'){
                 state = END_READ_VALUE;
                 if(onReadStringItem(currentKey , valueBuf , readIndex) < 0){
@@ -322,6 +327,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     break;
                 case L'}':
                     state = END;
+                    readIndex--;
                     readEndPosition = readIndex;
                     break;
                 default:
@@ -382,6 +388,13 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                         return -1;
                     }
                     break;
+                case L']':
+                    state = ParserState::END;
+                    readEndPosition = readIndex;
+                    if(onReadArrayNumItem(valueBuf , readIndex) < 0){
+                        return -1;
+                    }
+                    break;
                 default:
                     valueBuf += ch;
                     break;
@@ -412,6 +425,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                     break;
             }//end switch
         } else if(state == ParserState::END){
+            readEndPosition = readIndex;
             // std::cout << "quit " << readEndPosition << std::endl;
             return 0;
         }else{
@@ -580,6 +594,7 @@ int JsonParser::onReadArrayJsonObjectItem(std::shared_ptr<JsonObject> jsonObject
 
     currentJsonArray->pushJsonObject(jsonObject);
     position = offsetPosition;
+    // std::cout << "onReadArrayJsonObjectItem position " << position << std::endl;
     return 0;
 }
 

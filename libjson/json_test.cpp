@@ -414,6 +414,40 @@ void testFixBug1(){
         auto array = json->getJsonArray("list");
         Equal(5 , array->size());
     });
+
+    Test("object contain list2" , [](){
+        auto _obj = JsonObject::create();
+        auto _list = JsonArray::create();
+        _obj->putJsonArray("list" , _list);
+
+        int len = 4;
+        for(int i = 0; i < len ;i++){
+            auto _item = JsonObject::create();
+            _item->putString("value" , L"X");
+            _item->putInt("width" , 100);
+            _item->putInt("height" , 200);
+            _item->putString("texture" , L"test.png");
+            
+            auto _arr = JsonArray::create();
+            _arr->pushFloat(1.0f);
+            _arr->pushFloat(2.0f);
+            _arr->pushFloat(3.0f);
+            _arr->pushFloat(4.0f);
+            
+            _item->putJsonArray("texCoords" , _arr);
+
+            _list->pushJsonObject(_item);
+        }//end for i
+
+        std::wstring str = _obj->toJsonString();
+
+        WriteStringToFile("out.json" , str);
+
+        JsonParser parser;
+        auto json = parser.parseJsonObject(str);
+        auto array = json->getJsonArray("list");
+        Equal(len , array->size());
+    });
 }
 
 int main(){
