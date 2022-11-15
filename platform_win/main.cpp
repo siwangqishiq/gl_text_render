@@ -58,9 +58,9 @@ int main(int argc , char *argv[]){
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window , &app);
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow* windows_,int w,int h){
-        // app->onResize(w , h);
         void* app_ = glfwGetWindowUserPointer(windows_);
-        std::shared_ptr<WinApplication> app= *(static_cast<std::shared_ptr<WinApplication> *>(app_));
+        std::shared_ptr<WinApplication> app= 
+            *(static_cast<std::shared_ptr<WinApplication> *>(app_));
         app->onResize(w , h);
     });
 

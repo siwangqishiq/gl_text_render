@@ -12,15 +12,15 @@ build_dir:
 
 compile: build_dir \
 		${BUILD_DIR}/main.o \
-		${BUILD_DIR}/Application.o \
+		${BUILD_DIR}/application.o \
 		${BUILD_DIR}/json.o \
 		${BUILD_DIR}/glad.o 
 
 ${BUILD_DIR}/json.o:
 	${CC} -std=${STD} -c ${DIR}/libjson/json.cpp -o ${BUILD_DIR}/json.o
 
-${BUILD_DIR}/Application.o:
-	${CC} -std=${STD} -c ${SRC_DIR}/Application.cpp -o ${BUILD_DIR}/Application.o -I ${INCLUDE_DIR}
+${BUILD_DIR}/application.o:
+	${CC} -std=${STD} -c ${SRC_DIR}/application.cpp -o ${BUILD_DIR}/application.o -I ${INCLUDE_DIR}
 
 ${BUILD_DIR}/glad.o:${SRC_DIR}/render/glad.cpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/glad.cpp -o ${BUILD_DIR}/glad.o -I ${INCLUDE_DIR}
