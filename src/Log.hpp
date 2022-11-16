@@ -7,8 +7,10 @@
 
 
 //日志过滤tag
-std::string logFilter = "";
+#ifndef _LOG_H_
+#define _LOG_H_
 
+const std::string logFilter = "";
 
 /**
  * @brief  log output iostream
@@ -16,7 +18,7 @@ std::string logFilter = "";
  * @param tag 
  * @param msg 
  */
-void Log(std::string tag , std::string msg){
+inline void Log(std::string tag , std::string msg){
     if(logFilter != "" && logFilter != tag){
         return;
     }
@@ -25,7 +27,7 @@ void Log(std::string tag , std::string msg){
 }
 
 template<typename ... Args>
-std::string StringFormat(const std::string& format, Args ... args){
+inline std::string StringFormat(const std::string& format, Args ... args){
     int size_s = std::snprintf(nullptr, 0, format.c_str(), args ... ) + 1;
     if( size_s <= 0 ){ 
         throw std::runtime_error( "Error during formatting." ); 
@@ -38,8 +40,10 @@ std::string StringFormat(const std::string& format, Args ... args){
 }
 
 template<typename ... Args>
-void Logi(std::string tag , std::string format , Args ... args){
+inline void Logi(std::string tag , std::string format , Args ... args){
     // auto out = StringFormat(format , args ...);
     // std::cout << "out " << out << std::endl;
     Log(tag , StringFormat(format , args ...));
 }
+
+#endif

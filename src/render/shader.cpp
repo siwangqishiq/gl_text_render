@@ -2,7 +2,7 @@
 // Created by panyi on 2022/7/1.
 //
 
-#include "shader.h"
+#include "shader.hpp"
 #include <fstream>
 #include "glm/gtc/type_ptr.hpp"
 #include "log.hpp"
@@ -26,7 +26,7 @@ GLuint CreateGPUProgram(const char* vsShaderSource, const char* fsShaderSource) 
         char szLog[1024] = { 0 };
         GLsizei logLen = 0;
         glGetProgramInfoLog(program, 1024, &logLen, szLog);
-        Logi("shader", "Compile program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
+        Logi(TAG_SHADER, "Compile program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
         glDeleteShader(program);
         program = 0;
     }
@@ -47,13 +47,13 @@ GLuint CreateGPUProgram(const char* vsShaderSource, const char* fsShaderSource) 
         char szLog[1024] = { 0 };
         GLsizei logLen = 0;
         glGetProgramInfoLog(program, 1024, &logLen, szLog);
-        Loge("LogLen : %d" , logLen);
-        Loge("Link program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
+        Logi(TAG_SHADER,"LogLen : %d" , logLen);
+        Logi(TAG_SHADER,"Link program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
         glDeleteShader(program);
         program = 0;
     }
 
-    Logi("program = %d" , program);
+    Logi(TAG_SHADER , "program = %d" , program);
     return program;
 }
 
@@ -68,7 +68,7 @@ std::string ReadFileAsText(std::string path){
             content += line;
         }//end while
     }else{
-        Loge("open file : %s error" , path.c_str());
+        Logi(TAG_SHADER , "open file : %s error" , path.c_str());
     }
     infile.close();
     return content;
@@ -99,13 +99,13 @@ Shader Shader::buildGPUProgramAssetFile(std::string vtxPath , std::string frgPat
 GLuint CompileShader(GLenum shaderType, const char* shaderSource) {
     GLuint shader = glCreateShader(shaderType);
     if (shader == 0) {
-        Loge("create shader failed : %s" , shaderSource);
+        Logi(TAG_SHADER , "create shader failed : %s" , shaderSource);
         glDeleteShader(shader);
         return 0;
     }
     const char* shaderCode = shaderSource;
     if (shaderCode == nullptr) {
-        Loge("load shader code from %s failed" , shaderSource);
+        Logi(TAG_SHADER , "load shader code from %s failed" , shaderSource);
         glDeleteShader(shader);
         return 0;
     }
@@ -119,7 +119,7 @@ GLuint CompileShader(GLenum shaderType, const char* shaderSource) {
         char szLog[1024] = { 0 };
         GLsizei logLen = 0;
         glGetShaderInfoLog(shader, 1024, &logLen, szLog);
-        printf("Compile Shader fail error log: %s \nshader code:\n%s\n", szLog, shaderCode);
+        Logi(TAG_SHADER , "Compile Shader fail error log: %s \nshader code:\n%s\n", szLog, shaderCode);
         glDeleteShader(shader);
         shader = 0;
     }
@@ -211,16 +211,16 @@ Shader ShaderManager::fetchShaderByPath(std::string shaderName , std::string ver
 }
 
 void ShaderManager::clear() {
-    Logi("shader manager clear");
+    Logi(TAG_SHADER , "shader manager clear");
 
     for(auto pair : shaderMap){
         Shader shader = pair.second;
         glDeleteShader(shader.programId);
     }
 
-    Logi("shader map size %d" , shaderMap.size());
+    Logi(TAG_SHADER ,"shader map size %d" , shaderMap.size());
     shaderMap.clear();
-    Logi("shader map size after clear %d" , shaderMap.size());
+    Logi(TAG_SHADER ,"shader map size after clear %d" , shaderMap.size());
 }
 
 ShaderManager& ShaderManager::getInstance() {

@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <map>
 
+const std::string TAG_SHADER = "shader";
+
 // //读取asset 文本文件
 // std::string ReadAssetTextFile(std::string filename);
 

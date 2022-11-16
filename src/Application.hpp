@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <memory>
+#include "render/triangle.hpp"
+
 
 /**
  * @brief  应用入口
@@ -27,4 +30,8 @@ public:
     virtual void update() = 0;
 
     virtual void free() = 0;
+
+private:
+    //for test
+    std::shared_ptr<Triangle> triangleDemo_;
 };
