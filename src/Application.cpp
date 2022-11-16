@@ -1,5 +1,5 @@
-#include "application.hpp"
-#include "log.hpp"
+#include "Application.hpp"
+#include "Log.hpp"
 
 //window surface header
 #include "common.hpp"
