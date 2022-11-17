@@ -2,14 +2,22 @@
 
 void Triangle::init(){
     std::string vertSrc = 
+    #ifdef __ANDROID__
+    "#version 300 es\n"
+    #else
     "#version 330 core\n"
+    #endif
     "layout(location = 0) in vec2 aPos;"
     "void main() {\n"
     "   gl_Position = vec4(aPos ,1.0 , 1.0);\n"
     "}\n";
 
     std::string fragSrc = 
+    #ifdef __ANDROID__
+    "#version 300 es\n"
+    #else
     "#version 330 core\n"
+    #endif
     "out vec4 FragColor;"
     "void main(){\n"
     "   FragColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"

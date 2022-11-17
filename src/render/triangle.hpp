@@ -2,7 +2,7 @@
 //draw a triangle for test
 #pragma once
 
-#include "common.hpp"
+#include "glheader.hpp"
 #include "shader.hpp"
 
 class Triangle{

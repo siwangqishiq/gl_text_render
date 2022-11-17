@@ -5,6 +5,7 @@
 #include "render/triangle.hpp"
 
 
+class RenderEngine;
 /**
  * @brief  应用入口
  * 
@@ -15,23 +16,26 @@ public:
 
     int screenWidth_ = 800;
     int screenHeight_ = 600;
-
+    
     void onInit();
 
     void onTrick();
 
     void onFree();
     
-    void onResize(int width , int height);
+    virtual void onResize(int width , int height);
     
     //平台相关
-    virtual void init() = 0;
+    virtual void init();
 
-    virtual void update() = 0;
+    virtual void update();
 
-    virtual void free() = 0;
+    virtual void free();
 
+    ~Application();
 private:
+    std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
+
     //for test
-    std::shared_ptr<Triangle> triangleDemo_;
+    std::shared_ptr<Triangle> triangleDemo_ = nullptr;
 };

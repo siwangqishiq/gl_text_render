@@ -19,18 +19,6 @@
 #include "Application.hpp"
 
 class WinApplication : public Application{
-public:
-    void init(){
-        onInit();
-    }
-
-    void update(){
-        onTrick();
-    }
-
-    void free(){
-        onFree();
-    }
 };
 
 
@@ -84,5 +72,6 @@ int main(int argc , char *argv[]){
     
     app->onFree();
 	glfwTerminate();
+    std::cout << "ENDED" << std::endl;
     return 0;
 }

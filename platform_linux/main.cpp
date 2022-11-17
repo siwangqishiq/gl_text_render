@@ -7,18 +7,6 @@
 #include "Application.hpp"
 
 class LinuxApplication : public Application{
-public:
-    void init(){
-        onInit();
-    }
-
-    void update(){
-        onTrick();
-    }
-
-    void free(){
-        onFree();
-    }
 };
 
 

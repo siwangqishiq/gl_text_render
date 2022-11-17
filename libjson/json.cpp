@@ -549,7 +549,7 @@ int JsonParser::onReadJsonArrayItem(std::wstring &key ,
     currentJsonObject->putJsonArray(ToByteString(key) , jsonArray);
 
     position = offsetPosition;
-    key == L"";
+    key = L"";
 
     return 0;
 }

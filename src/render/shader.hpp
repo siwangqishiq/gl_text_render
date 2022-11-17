@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "common.hpp"
+#include "glheader.hpp"
 #include <string>
 #include "glm/glm.hpp"
 #include <unordered_map>

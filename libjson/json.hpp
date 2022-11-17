@@ -42,6 +42,7 @@ inline std::wstring ReadTextFileAsWstring(const char *path){
 class JsonObject;
 class JsonArray;
 
+
 class IJson{
 public:
     virtual std::wstring toJsonString() = 0;
