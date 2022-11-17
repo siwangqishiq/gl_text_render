@@ -5,11 +5,34 @@
 #include <stdexcept>
 #include <memory>
 
+#ifdef __ANDROID__
 
+#include <android/log.h>
+
+#define  LOG_TAG    "textrender"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
+#endif
+
+#include <string>
+#include <chrono>
+#include <sstream>
+#include <iomanip>
+#include <iostream>
+
+
+#ifdef __ANDROID__
+
+#include <android/log.h>
+// #define  LOG_TAG    "textrender"
+// #define  Logi(...)  __android_log_print(ANDROID_LOG_INFO, __VA_ARGS__)
+
+inline void Logi(std::string tag , std::string format , ...){
+    __android_log_print(ANDROID_LOG_INFO, tag.c_str() , format.c_str() , nullptr);
+}
+
+#else
 //日志过滤tag
-#ifndef _LOG_H_
-#define _LOG_H_
-
 const std::string logFilter = "";
 
 /**
@@ -47,8 +70,40 @@ inline std::string StringFormat(const std::string& format, Args ... args){
 template<typename ... Args>
 inline void Logi(std::string tag , std::string format , Args ... args){
     // auto out = StringFormat(format , args ...);
-    // std::cout << "out " << out << std::endl;
     Log(tag , StringFormat(format , args ...));
 }
-
 #endif
+
+
+inline std::string date_time(std::time_t posix)
+{
+    char buf[20]; // big enough for 2015-07-08 10:06:51\0
+    std::tm tp = *std::localtime(&posix);
+    return {buf, std::strftime(buf, sizeof(buf), "%F %T", &tp)};
+}
+
+inline long long currentTimeMillis(){
+    using namespace std;
+    using namespace std::chrono;
+
+    // get absolute wall time
+    auto now = system_clock::now();
+
+    // find the number of milliseconds
+    auto ms = duration_cast<milliseconds>(now.time_since_epoch());
+    return ms.count();
+}
+
+inline long long currentTimeMicro(){
+    using namespace std;
+    using namespace std::chrono;
+
+    auto now = system_clock::now();
+
+    auto us = duration_cast<microseconds>(now.time_since_epoch());
+
+    return us.count();
+}
+
+
+

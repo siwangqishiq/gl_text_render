@@ -84,7 +84,7 @@ GLuint CreateGPUProgramFromFile(std::string vertexShaderPath , std::string fragS
 
 Shader Shader::buildGPUProgram(std::string vtxSrc , std::string frgSrc){
     Shader shader;
-    auto  pid = CreateGPUProgram(vtxSrc.c_str() , frgSrc.c_str());
+    auto pid = CreateGPUProgram(vtxSrc.c_str() , frgSrc.c_str());
     shader.programId = pid;
     return shader;
 }

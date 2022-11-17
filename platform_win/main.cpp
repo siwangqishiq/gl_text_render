@@ -72,6 +72,5 @@ int main(int argc , char *argv[]){
     
     app->onFree();
 	glfwTerminate();
-    std::cout << "ENDED" << std::endl;
     return 0;
 }

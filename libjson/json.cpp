@@ -574,7 +574,7 @@ int JsonParser::onReadJsonObjectItem(std::wstring &key ,
     currentJsonObject->putJsonObject(ToByteString(key) , jsonObject);
     
     position = offsetPosition;
-    key == L"";
+    key = L"";
 
     // std::wcout <<"onReadJsonObjectItem currentKey " << currentKey << this << std::endl;
     return 0;

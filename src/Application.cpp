@@ -6,8 +6,7 @@
 #include "render/render.hpp"
 
 void Application::onFree(){
-    Log(TAG , "app onFree");
-    
+    Logi(TAG , "app onFree");
     // triangleDemo_->free();
 }
 
@@ -33,12 +32,12 @@ void Application::onResize(int w , int h){
     screenHeight_ = h;
     
     if(renderEngine_ != nullptr){
-
+        renderEngine_->onScreenResize();
     }
 }
 
 void Application::onInit(){
-    Log(TAG , "app onInit");
+    Logi(TAG , "app onInit");
 
     // triangleDemo_ = std::make_shared<Triangle>();
     // triangleDemo_->init();
@@ -46,17 +45,29 @@ void Application::onInit(){
     // renderEngine_ = std::shared_ptr<RenderEngine>(new RenderEngine(std::shared_ptr<Application>(this)));
 
     renderEngine_ = std::make_shared<RenderEngine>(this);
+    renderEngine_->init();
 }
 
 void Application::onTrick(){
     // Log(TAG , "app trick");
-
     // triangleDemo_->trick();
 
-
-    if(renderEngine_ != nullptr){
-        renderEngine_->render();
+    //draw something
+    if(renderEngine_ == nullptr){
+        return;
     }
+
+    //user logic and draw
+    onSceneUpdate();
+
+    //gl commands run
+    renderEngine_->render();
+    
+    Logi(TAG , "time %lld  %lld" , currentTimeMillis() , currentTimeMicro());
+}
+
+void Application::onSceneUpdate(){
+    renderEngine_->renderText(L"你好世界" , 50 , 100);
 }
 
 

@@ -17,12 +17,13 @@ compile: build_dir \
 		${BUILD_DIR}/glad.o \
 		${BUILD_DIR}/shader.o \
 		${BUILD_DIR}/triangle.o \
-		${BUILD_DIR}/render.o 
+		${BUILD_DIR}/render.o \
+		${BUILD_DIR}/command.o
 
 ${BUILD_DIR}/json.o: ${DIR}/libjson/json.cpp ${DIR}/libjson/json.hpp
 	${CC} -std=${STD} -c ${DIR}/libjson/json.cpp -o ${BUILD_DIR}/json.o
 
-${BUILD_DIR}/application.o: ${SRC_DIR}/application.hpp
+${BUILD_DIR}/application.o: ${SRC_DIR}/application.hpp ${SRC_DIR}/application.cpp
 	${CC} -std=${STD} -c ${SRC_DIR}/application.cpp -o ${BUILD_DIR}/application.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
 
 ${BUILD_DIR}/glad.o:${SRC_DIR}/render/glad.cpp
@@ -30,6 +31,9 @@ ${BUILD_DIR}/glad.o:${SRC_DIR}/render/glad.cpp
 
 ${BUILD_DIR}/shader.o:${SRC_DIR}/render/shader.cpp ${SRC_DIR}/render/shader.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/shader.cpp -o ${BUILD_DIR}/shader.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
+
+${BUILD_DIR}/command.o:${SRC_DIR}/render/command.cpp ${SRC_DIR}/render/command.hpp
+	${CC} -std=${STD} -c ${SRC_DIR}/render/command.cpp -o ${BUILD_DIR}/command.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
 
 ${BUILD_DIR}/triangle.o:${SRC_DIR}/render/triangle.cpp ${SRC_DIR}/render/triangle.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/triangle.cpp -o ${BUILD_DIR}/triangle.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 

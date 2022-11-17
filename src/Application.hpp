@@ -3,6 +3,9 @@
 #include <string>
 #include <memory>
 #include "render/triangle.hpp"
+#include <ctime>
+#include <chrono>
+#include <sstream>
 
 
 class RenderEngine;
@@ -22,6 +25,8 @@ public:
     void onTrick();
 
     void onFree();
+
+    virtual void onSceneUpdate();
     
     virtual void onResize(int width , int height);
     
@@ -33,6 +38,10 @@ public:
     virtual void free();
 
     ~Application();
+
+    std::shared_ptr<RenderEngine> getRender() {
+        return renderEngine_;
+    }
 private:
     std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
 
