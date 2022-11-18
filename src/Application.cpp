@@ -51,8 +51,7 @@ void Application::onInit(){
 void Application::onTrick(){
     // Log(TAG , "app trick");
     // triangleDemo_->trick();
-
-    //draw something
+    
     if(renderEngine_ == nullptr){
         return;
     }
@@ -63,7 +62,7 @@ void Application::onTrick(){
     //gl commands run
     renderEngine_->render();
     
-    Logi(TAG , "time %lld  %lld" , currentTimeMillis() , currentTimeMicro());
+    // Logi(TAG , "time %lld  %lld" , currentTimeMillis() , currentTimeMicro());
 }
 
 void Application::onSceneUpdate(){

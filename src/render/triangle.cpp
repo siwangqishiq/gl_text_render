@@ -22,7 +22,7 @@ void Triangle::init(){
     "void main(){\n"
     "   FragColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"
     "}\n";
-
+    
     shader = ShaderManager::getInstance().fetchShader("triangle_render" , vertSrc, fragSrc);
 
     glGenVertexArrays(1 , &vao);
