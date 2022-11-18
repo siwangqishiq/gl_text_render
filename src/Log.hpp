@@ -23,15 +23,66 @@
 
 #ifdef __ANDROID__
 
+#include <cstdarg>
 #include <android/log.h>
-// #define  LOG_TAG    "textrender"
-// #define  Logi(...)  __android_log_print(ANDROID_LOG_INFO, __VA_ARGS__)
 
-inline void Logi(std::string tag , std::string format , ...){
-    __android_log_print(ANDROID_LOG_INFO, tag.c_str() , format.c_str() , nullptr);
+inline void Logi(std::string tag , const char * cformat , ...){
+     int count = 0;
+
+    int index = 0;
+    int pos = 0;
+    std::string format = std::string(cformat);
+    while(index < format.length()){
+        auto ch = format[index];
+        if(ch == '%'){
+            count++;
+        }
+        index++;
+    }//end while
+
+    // cout << "count : " << count << endl;
+
+    va_list args;
+    va_start(args , count);
+    std::string result;
+    index = 0;
+
+    while(index < format.length()){
+        auto ch = format[index];
+        if(ch != '%'){
+            result += (ch);
+        }else{
+            if(format[index + 1] == 'd'){
+                int argValue = va_arg(args , int);
+                result += std::to_string(argValue);
+                index++;
+            }else if(format[index + 1] == 'l' && format[index + 2] == 'd'){
+                long argValue = va_arg(args , long);
+                result += std::to_string(argValue);
+                index += 2;
+            }else if(format[index + 1] == 'l'
+                && format[index + 2] == 'l' && format[index + 3] == 'd'){
+                long long argValue = va_arg(args , long long);
+                result += std::to_string(argValue);
+                index += 3;
+            }else if(format[index + 1] == 'f'){
+                double argValue = va_arg(args , double);
+                result += std::to_string(argValue);
+                index++;
+            }else if(format[index + 1] == 's'){
+                std::string argValue = std::string(va_arg(args , char *));
+                result += (argValue);
+                index++;
+            }
+        }
+        index++;
+    }//end while
+    va_end(args);
+    __android_log_print(ANDROID_LOG_INFO, tag.c_str() , result.c_str() , nullptr);
 }
 
 #else
+
 //日志过滤tag
 const std::string logFilter = "";
 
