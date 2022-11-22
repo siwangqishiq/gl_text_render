@@ -13,9 +13,12 @@ VRamManager::VRamManager(){
 }
 
 int VRamManager::fetchVideoMemory(int requestSize ,
-        unsigned int &bufferId , int &offset , int &size){
+        unsigned int &bufferId ,
+        unsigned int &vao, 
+        int &offset , int &size){
     if(allocator_ != nullptr){
-        return allocator_ ->fetchVideoMemory(requestSize ,bufferId , offset , size);
+        return allocator_ ->fetchVideoMemory(requestSize ,
+                    bufferId ,vao , offset , size);
     }
     return 0;
 }
@@ -33,7 +36,9 @@ void VRamManager::clear(){
 }
 
 int VRamAllcator::fetchVideoMemory(int requestSize ,
-        unsigned int &bufferId , int &offset , int &size){
+            unsigned int &bufferId ,
+            unsigned int &vao,
+            int &offset , int &size){
     if(requestSize > ALLOCATOR_SIZE){
         Logi("VRamManager" , "allocator %d too large for allocator" , requestSize);
         return -1;
@@ -58,6 +63,7 @@ int VRamAllcator::fetchVideoMemory(int requestSize ,
     }
 
     bufferId = mInfo->bufferId;
+    vao = mInfo->vao;
     offset = mInfo->offset;
     mInfo->offset += requestSize;
     size = requestSize;
@@ -66,9 +72,12 @@ int VRamAllcator::fetchVideoMemory(int requestSize ,
 
 void VRamAllcator::createNewBuffer(){
     auto newAllocatorBufferId = genBuffer();
+    unsigned int vaoValue = -1;
+    glGenVertexArrays(1 , &vaoValue);
 
     auto info = std::make_shared<MemoryAllocatorInfo>();
     info->bufferId = newAllocatorBufferId;
+    info->vao = vaoValue;
     info->size = ALLOCATOR_SIZE;
     info->offset = 0;
     

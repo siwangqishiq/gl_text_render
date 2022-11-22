@@ -7,6 +7,7 @@
 
 struct MemoryAllocatorInfo{
     unsigned int bufferId = -1;
+    unsigned int vao = -1;
     int size = 0;
     int offset = 0;
 };
@@ -24,7 +25,9 @@ private:
 public:
     const int ALLOCATOR_SIZE = 8 * 1024;//8K 一次分配8K字节 
 
-    int fetchVideoMemory(int requestSize ,unsigned int &bufferId , int &offset , int &size);
+    int fetchVideoMemory(int requestSize ,
+            unsigned int &bufferId , unsigned int &vao,
+            int &offset , int &size);
 
     void recycleAllMemory();
 
@@ -49,7 +52,10 @@ public:
     void clear();
 
     //获取一块显存 用于写入内容
-    int fetchVideoMemory(int requestSize , unsigned int &bufferId , int &offset , int &size);
+    int fetchVideoMemory(int requestSize , 
+            unsigned int &bufferId , 
+            unsigned int &vao,
+            int &offset , int &size);
 private:
     std::shared_ptr<VRamAllcator> allocator_;
 };

@@ -13,7 +13,7 @@ void TextRenderCommand::putParams(std::wstring text , float left , float bottom)
     int allocateSize = 0;
     // Logi("command" , "allocator size = %d" , requestSize);
     VRamManager::getInstance().fetchVideoMemory(requestSize , 
-        vbo_ , vboOffset_ , allocateSize);
+        vbo_ ,vao_, vboOffset_ , allocateSize);
 
     if(vbo_ <= 0){
         return;
@@ -71,8 +71,6 @@ void TextRenderCommand::putParams(std::wstring text , float left , float bottom)
         x += charWidth;
     }//end for i
 
-    glGenVertexArrays(1 , &vao_);
-
     glBindVertexArray(vao_);
     // Logi("cmd" , "vboOffset_ = %d",vboOffset_);
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);
@@ -85,6 +83,7 @@ void TextRenderCommand::putParams(std::wstring text , float left , float bottom)
         (void *)(vboOffset_));
     glVertexAttribPointer(1 , 2 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
         (void *)(vboOffset_ + 3 * sizeof(float)));
+
     glBindBuffer(GL_ARRAY_BUFFER , 0);
 }
 
@@ -94,7 +93,16 @@ void TextRenderCommand::runCommands(){
     shader.setUniformMat3("transMat" , engine_->normalMatrix_);
     
     glBindVertexArray(vao_);
+    Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);
+    
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0 , 3 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
+        (void *)(vboOffset_));
+    glVertexAttribPointer(1 , 2 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
+        (void *)(vboOffset_ + 3 * sizeof(float)));
+
     // Logi("cmd" , "render vertex count %d" , vertexCount_);
     glDrawArrays(GL_TRIANGLE_FAN , 0 , vertexCount_);
 }

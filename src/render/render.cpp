@@ -71,8 +71,9 @@ void RenderEngine::renderText(std::wstring text , float left , float bottom){
 }
 
 std::shared_ptr<TextRenderCommand> RenderEngine::fetchTextRenderCommand(RenderEngine *engine){
+    //new a new instace later use pool to reuse
     auto newCmd = 
-        std::make_shared<TextRenderCommand>(this);//new a new instace later use pool to reuse
+        std::make_shared<TextRenderCommand>(this);
     newCmd->used = true;
     return newCmd;
 }
@@ -106,6 +107,7 @@ void TextRenderHelper::loadRes(RenderEngine &engine){
     "void main(){\n"
     "   outColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"
     "}\n";
-    
-    textRenderShader_ = ShaderManager::getInstance().fetchShader("text_render" , vertSrc, fragSrc);
+
+    textRenderShader_ = ShaderManager::getInstance()
+                            .fetchShader("text_render" , vertSrc, fragSrc);
 }

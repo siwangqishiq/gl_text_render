@@ -20,11 +20,12 @@ add_library( # Sets the name of the library.
         SHARED
         libapp.cpp
         ${SRC_DIR}/application.cpp
+        ${DIR}/libjson/json.cpp
         ${SRC_DIR}/render/shader.cpp
-        ${SRC_DIR}/render/command.cpp
         ${SRC_DIR}/render/triangle.cpp
         ${SRC_DIR}/render/render.cpp
-        ${DIR}/libjson/json.cpp
+        ${SRC_DIR}/render/command.cpp
+        ${SRC_DIR}/render/vram.cpp
         )
 
 set(OPENGL_LIB GLESv3)
