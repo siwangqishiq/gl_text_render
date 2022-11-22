@@ -18,7 +18,8 @@ compile: build_dir \
 		${BUILD_DIR}/shader.o \
 		${BUILD_DIR}/triangle.o \
 		${BUILD_DIR}/render.o \
-		${BUILD_DIR}/command.o
+		${BUILD_DIR}/command.o \
+		${BUILD_DIR}/vram.o
 
 ${BUILD_DIR}/json.o: ${DIR}/libjson/json.cpp ${DIR}/libjson/json.hpp
 	${CC} -std=${STD} -c ${DIR}/libjson/json.cpp -o ${BUILD_DIR}/json.o
@@ -37,6 +38,9 @@ ${BUILD_DIR}/command.o:${SRC_DIR}/render/command.cpp ${SRC_DIR}/render/command.h
 
 ${BUILD_DIR}/triangle.o:${SRC_DIR}/render/triangle.cpp ${SRC_DIR}/render/triangle.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/triangle.cpp -o ${BUILD_DIR}/triangle.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 
+
+${BUILD_DIR}/vram.o:${SRC_DIR}/render/vram.cpp ${SRC_DIR}/render/vram.hpp
+	${CC} -std=${STD} -c ${SRC_DIR}/render/vram.cpp -o ${BUILD_DIR}/vram.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
 
 ${BUILD_DIR}/render.o:${SRC_DIR}/render/render.cpp ${SRC_DIR}/render/render.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/render.cpp -o ${BUILD_DIR}/render.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
