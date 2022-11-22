@@ -2,18 +2,26 @@
 #include "application.hpp"
 #include "log.hpp"
 #include "command.hpp"
+#include "vram.hpp"
 
 void RenderEngine::render(){
     glClearColor(0.0f , 0.0f , 0.0f , 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glEnable(GL_DEPTH_TEST);
     
     //gl render
     for(auto &cmd : renderCommandList_){
         cmd->runCommands();
+        cmd->used = false;
     }
     
     //clear cmd list
     clearRenderCommands();
+    VRamManager::getInstance().onPostRender();
+}
+
+void RenderEngine::free(){
+    VRamManager::getInstance().clear();
 }
 
 void RenderEngine::clearRenderCommands(){
@@ -22,14 +30,13 @@ void RenderEngine::clearRenderCommands(){
 
 void RenderEngine::onScreenResize(){
     resetNormalMat(appContext_->screenWidth_ , appContext_->screenHeight_);
-
     glViewport(0 , 0 , appContext_->screenWidth_ , appContext_->screenHeight_);
 }
 
 void RenderEngine::init(){
     Logi(TAG , "render engine init start");
     loadTextRenderResource();//text render init
-    Logi(TAG , "render engine init end");
+    // Logi(TAG , "render engine init end");
 }
 
 void RenderEngine::loadTextRenderResource(){
@@ -58,9 +65,16 @@ void RenderEngine::submitRenderCommand(std::shared_ptr<RenderCommand> cmd){
 }
 
 void RenderEngine::renderText(std::wstring text , float left , float bottom){
-    auto cmd = std::make_shared<TextRenderCommand>(this);
+    auto cmd = fetchTextRenderCommand(this);
     cmd->putParams(text , left , bottom);
     submitRenderCommand(cmd);
+}
+
+std::shared_ptr<TextRenderCommand> RenderEngine::fetchTextRenderCommand(RenderEngine *engine){
+    auto newCmd = 
+        std::make_shared<TextRenderCommand>(this);//new a new instace later use pool to reuse
+    newCmd->used = true;
+    return newCmd;
 }
 
 void TextRenderHelper::loadRes(RenderEngine &engine){
@@ -87,12 +101,11 @@ void TextRenderHelper::loadRes(RenderEngine &engine){
     "#version 330 core\n"
     #endif
     "precision mediump float;"
-    "uniform sampler2D sTexture;"
     "in vec2 vUv;"
     "out vec4 outColor;"
     "void main(){\n"
     "   outColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"
     "}\n";
-
+    
     textRenderShader_ = ShaderManager::getInstance().fetchShader("text_render" , vertSrc, fragSrc);
 }

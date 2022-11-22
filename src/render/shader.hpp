@@ -42,7 +42,7 @@ public:
     //
     void setUniformMat4(std::string key , glm::mat4 mat);
 
-    void setIUniformMat3(std::string key , glm::mat3 mat);
+    void setUniformMat3(std::string key , glm::mat3 mat);
 
     //设置三维向量
     void setUniformVec3(std::string key , float x , float y , float z);

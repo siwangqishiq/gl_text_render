@@ -27,6 +27,8 @@ struct TextConfig{
     float size = 1.0f;
 };
 
+class TextRenderCommand;
+
 class RenderEngine{
 public:
     const std::string TAG = "RenderEngine";
@@ -42,6 +44,8 @@ public:
     void submitRenderCommand(std::shared_ptr<RenderCommand> cmd);
 
     void render();
+
+    void free();
 
     void onScreenResize();
 
@@ -59,6 +63,10 @@ private:
     void loadTextRenderResource();
 
     void resetNormalMat(float w , float h);
+
+    int textCommandIndex;
+    std::vector<std::shared_ptr<TextRenderCommand>> textCommandPool;
+    std::shared_ptr<TextRenderCommand> fetchTextRenderCommand(RenderEngine *engine);
 };
 
 class TextRenderHelper{

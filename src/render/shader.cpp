@@ -14,15 +14,30 @@ std::string ReadAssetTextFile(std::string filename) {
 GLuint CreateGPUProgram(const char* vsShaderSource, const char* fsShaderSource) {
     GLuint vsShader = CompileShader(GL_VERTEX_SHADER, vsShaderSource);
     GLuint fsShader = CompileShader(GL_FRAGMENT_SHADER, fsShaderSource);
-
+    // std::cout << "glCompileProgram e222:" << glGetError() <<std::endl;
     //Attach
     GLuint program = glCreateProgram();
     glAttachShader(program, vsShader);
     glAttachShader(program, fsShader);
+    // std::cout << "glCompileProgram e111:" << glGetError() <<std::endl;
+    
+    // GLint compileResult = GL_TRUE;
+    // glGetProgramiv(program, GL_COMPILE_STATUS, &compileResult);
+    // std::cout << "glCompileProgram e0000:" << glGetError() <<std::endl;
+    // if(compileResult == GL_FALSE){
+    //     char szLog[1024] = { 0 };
+    //     GLsizei logLen = 0;
+    //     glGetProgramInfoLog(program, 1024, &logLen, szLog);
+    //     Logi(TAG_SHADER, "Compile program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
+    //     glDeleteShader(program);
+    //     program = 0;
+    // }
 
-    GLint compileResult = GL_TRUE;
-    glGetProgramiv(program, GL_COMPILE_STATUS, &compileResult);
-    if(compileResult == GL_FALSE){
+    //Link
+    glLinkProgram(program);
+    GLint linkResult = GL_TRUE;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkResult);
+    if(linkResult == GL_FALSE){
         char szLog[1024] = { 0 };
         GLsizei logLen = 0;
         glGetProgramInfoLog(program, 1024, &logLen, szLog);
@@ -31,8 +46,7 @@ GLuint CreateGPUProgram(const char* vsShaderSource, const char* fsShaderSource) 
         program = 0;
     }
 
-    //Link
-    glLinkProgram(program);
+    // std::cout << "glLinkProgram e000:" << glGetError() <<std::endl;
 
     //Clear
     glDetachShader(program, vsShader);
@@ -40,20 +54,9 @@ GLuint CreateGPUProgram(const char* vsShaderSource, const char* fsShaderSource) 
     glDeleteShader(vsShader);
     glDeleteShader(fsShader);
 
-    //check error
-    GLint linkResult = GL_TRUE;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkResult);
-    if (linkResult == GL_FALSE) {
-        char szLog[1024] = { 0 };
-        GLsizei logLen = 0;
-        glGetProgramInfoLog(program, 1024, &logLen, szLog);
-        Logi(TAG_SHADER,"LogLen : %d" , logLen);
-        Logi(TAG_SHADER,"Link program fail error log: %s \nvs shader code:\n%s\nfs shader code:\n%s\n" , szLog , vsShaderSource , fsShaderSource);
-        glDeleteShader(program);
-        program = 0;
-    }
-
+    // std::cout << "glDeleteShader e000:" << glGetError() <<std::endl;
     Logi(TAG_SHADER , "program = %d" , program);
+    // std::cout << "glCompileProgram error:" << glGetError() <<std::endl;
     return program;
 }
 
@@ -140,7 +143,7 @@ void Shader::setUniformFloat(std::string key , float value){
     glUniform1f(loc , value);
 }
 
-void Shader::setIUniformMat3(std::string key, glm::mat3 mat) {
+void Shader::setUniformMat3(std::string key, glm::mat3 mat) {
     GLint loc = findUniformLocation(key);
     glUniformMatrix3fv(loc , 1 , GL_FALSE , glm::value_ptr(mat));
 }
