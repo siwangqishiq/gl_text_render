@@ -92,9 +92,9 @@ void TextRenderCommand::runCommands(){
     shader.setUniformMat3("transMat" , engine_->normalMatrix_);
     
     glBindVertexArray(vao_);
-    Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);
+    // Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);
-
+    
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(0 , 3 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 

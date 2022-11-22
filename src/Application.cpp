@@ -1,9 +1,10 @@
 #include "Application.hpp"
-#include "Log.hpp"
+#include "log.hpp"
 
 //window surface header
 #include "glheader.hpp"
 #include "render/render.hpp"
+#include "resource/asset_manager.hpp"
 
 void Application::onFree(){
     Logi(TAG , "app onFree");
@@ -51,6 +52,9 @@ void Application::onInit(){
 
     triangleDemo_ = std::make_shared<Triangle>();
     triangleDemo_->init();
+
+    auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
+    std::wcout <<"file len" << fileContent.length() <<  fileContent << std::endl;
 }
 
 void Application::onTrick(){
@@ -76,8 +80,8 @@ void Application::onSceneUpdate(){
 
     for(;y < screenHeight_ ;y += 40.0f){
         x = 0.0f;
-        for(; x < screenWidth_ ; x += 30.0f){
-            renderEngine_->renderText(L"馨" , x , y);
+        for(; x < screenWidth_ ; x += 50.0f){
+            renderEngine_->renderText(L"梅西" , x , y);
         }
     }
 }

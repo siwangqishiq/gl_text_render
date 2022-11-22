@@ -193,7 +193,7 @@ int Shader::findUniformLocation(std::string key){
 //获取 或 创建出一个shader
 Shader ShaderManager::fetchShader(std::string shaderName , std::string vtxSrc , std::string frgSrc) {
     if(shaderMap.find(shaderName) == shaderMap.end()){//not found shader create a new shader
-        Logi("Shader" , "no found %s , create a new shader" , shaderName.c_str());
+        Logi("Shader" , "create a new shader %s " , shaderName.c_str());
         Shader shader = Shader::buildGPUProgram(vtxSrc , frgSrc);
         shaderMap[shaderName] = shader;
     }

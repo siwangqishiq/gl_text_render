@@ -96,7 +96,7 @@ inline void Log(std::string tag , std::string msg){
     if(logFilter != "" && logFilter != tag){
         return;
     }
-
+    
     std::cout << tag << " :" << msg << std::endl;
 }
 

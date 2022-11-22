@@ -105,9 +105,9 @@ void TextRenderHelper::loadRes(RenderEngine &engine){
     "in vec2 vUv;"
     "out vec4 outColor;"
     "void main(){\n"
-    "   outColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"
+    "   outColor = vec4(0.0f , 1.0f , 0.0f , 1.0f);\n"
     "}\n";
-
+    
     textRenderShader_ = ShaderManager::getInstance()
                             .fetchShader("text_render" , vertSrc, fragSrc);
 }
