@@ -76,15 +76,14 @@ void TextRenderCommand::putParams(std::wstring text , float left , float bottom)
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);
     glBufferSubData(GL_ARRAY_BUFFER , vboOffset_ , 
         buf.size() * sizeof(float) , buf.data());
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(0 , 3 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
-        (void *)(vboOffset_));
-    glVertexAttribPointer(1 , 2 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
-        (void *)(vboOffset_ + 3 * sizeof(float)));
-
+    // glEnableVertexAttribArray(0);
+    // glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(0 , 3 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
+    //     (void *)(vboOffset_));
+    // glVertexAttribPointer(1 , 2 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
+    //     (void *)(vboOffset_ + 3 * sizeof(float)));
     glBindBuffer(GL_ARRAY_BUFFER , 0);
+    glBindVertexArray(0);
 }
 
 void TextRenderCommand::runCommands(){
@@ -95,13 +94,13 @@ void TextRenderCommand::runCommands(){
     glBindVertexArray(vao_);
     Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);
-    
+
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(0 , 3 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
-        (void *)(vboOffset_));
+        reinterpret_cast<void *>(vboOffset_));
     glVertexAttribPointer(1 , 2 , GL_FLOAT , GL_FALSE , 5 * sizeof(float) , 
-        (void *)(vboOffset_ + 3 * sizeof(float)));
+        reinterpret_cast<void *>(vboOffset_ + 3 * sizeof(float)));
 
     // Logi("cmd" , "render vertex count %d" , vertexCount_);
     glDrawArrays(GL_TRIANGLE_FAN , 0 , vertexCount_);
