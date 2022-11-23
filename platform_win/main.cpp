@@ -8,6 +8,9 @@
 #elif _WIN64
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#elif __CYGWIN__
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #elif __ANDROID__
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
