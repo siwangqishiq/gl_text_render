@@ -8,7 +8,9 @@ int main(){
         EqualWString(L"Hello World!你好世界" , content);
     });
 
-    
+    Test("test asset mgr read image" , [](){
+        
+    });
 
     return utest.testAll();
 }

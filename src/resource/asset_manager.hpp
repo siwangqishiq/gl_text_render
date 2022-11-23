@@ -13,6 +13,9 @@
 #include <streambuf>
 #include <codecvt>
 
+const int TEXTURE_FILE_CHANNEL_RGB = 3;
+const int TEXTURE_FILE_CHANNEL_ARGB = 4;
+
 class AndroidAssetManager;
 
 class AssetManager{

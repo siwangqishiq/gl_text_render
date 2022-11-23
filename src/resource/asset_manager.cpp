@@ -3,7 +3,7 @@
 #include "log.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "stb_image.hpp"
 
 std::shared_ptr<AssetManager> AssetManager::getInstance(){
     static std::shared_ptr<AssetManager> instance_;
@@ -26,6 +26,7 @@ std::wstring AssetManager::readTextFile(std::string path){
 int AssetManager::readTextureFile(std::string path ,long &filesize, uint8_t *data){
     std::string filePath = assetRootDir() + path;
     Logi("asset" , "read file path %s" , filePath.c_str());
+    
     
     return 0;
 }
