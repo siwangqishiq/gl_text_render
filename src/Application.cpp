@@ -52,9 +52,9 @@ void Application::onInit(){
 
     triangleDemo_ = std::make_shared<Triangle>();
     triangleDemo_->init();
-
-    auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
-    std::wcout <<"file len" << fileContent.length() <<  fileContent << std::endl;
+    
+    // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
+    // std::wcout <<"file len" << fileContent.length() <<  fileContent << std::endl;
 }
 
 void Application::onTrick(){

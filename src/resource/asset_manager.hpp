@@ -1,7 +1,7 @@
 
 /**
  * @brief  
- * resource access
+ * resource access 
  * 
  */
 #pragma once
@@ -21,7 +21,11 @@ public:
 
     static std::shared_ptr<AssetManager> instance_;
 
+    // read text file
     virtual std::wstring readTextFile(std::string path);
+
+    // read png file 
+    virtual int readTextureFile(std::string path ,long &filesize, uint8_t *data);
 
     AssetManager(){
         Logi("asset_manager" , "asset manager construct");
@@ -31,7 +35,13 @@ public:
         Logi("asset_manager" , "asset manager deconstruct");
     }
 
-    inline std::wstring toWideString(const std::string& input){
+protected:
+    std::string assetRootDir() {
+        return "../assets/";
+    }
+
+private:
+     inline std::wstring toWideString(const std::string& input){
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
         return converter.from_bytes(input);
     }
@@ -41,16 +51,11 @@ public:
         return converter.to_bytes(input);
     }
 
-    std::wstring readFileAsWstring(const char *path){
+    inline std::wstring readFileAsWstring(const char *path){
         std::ifstream file(path);
         std::string str((std::istreambuf_iterator<char>(file)),
                     std::istreambuf_iterator<char>());
         return toWideString(str);
-    }
-
-protected:
-    std::string assetRootDir() {
-        return "../assets/";
     }
 };
 

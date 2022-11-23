@@ -60,6 +60,15 @@ link:compile
 run:link
 	${BUILD_DIR}/main.exe
 
+#test
+asset_test_run:	${SRC_DIR}/resource/asset_manager.cpp \
+				${SRC_DIR}/resource/asset_manager.hpp \
+				${SRC_DIR}/resource/asset_manager_test.cpp
+	${CC} -std=${STD} ${SRC_DIR}/resource/asset_manager.cpp ${SRC_DIR}/resource/asset_manager_test.cpp -o ${BUILD_DIR}/asset_test_run -I ${INCLUDE_DIR} -I ${SRC_DIR}
+
+test_asset:asset_test_run
+	${BUILD_DIR}/asset_test_run
+
 clean:
 	rm -f ${BUILD_DIR}/*.o 
 	rm -f ${BUILD_DIR}/main.exe
