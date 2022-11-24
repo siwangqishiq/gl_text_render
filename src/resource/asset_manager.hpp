@@ -50,7 +50,7 @@ protected:
         return "../assets/";
     }
 
-private:
+protected:
      inline std::wstring toWideString(const std::string& input){
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
         return converter.from_bytes(input);
@@ -69,12 +69,20 @@ private:
     }
 };
 
+#ifdef __ANDROID__
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+extern AAssetManager *AndroidAssetManagerInstance;
+
 /**
- * @brief 
+ * @brief
  * for android asset resouce access
- * 
+ *
  */
 class AndroidAssetManager : public AssetManager{
 public:
-    virtual std::wstring readFileToText(std::string path);
+    virtual std::wstring readTextFile(std::string path);
 };
+
+#endif
+

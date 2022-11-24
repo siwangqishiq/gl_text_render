@@ -1,4 +1,4 @@
-### 学习性质的跨平台渲染库
+### 跨平台渲染库
     计划支持平台 
         Windows linux(ubuntu) macos Android iOS 
 
@@ -24,6 +24,7 @@
 ### 组件介绍
 ##### RenderEngine 
     AssetManager 用于资源的管理 针对不同操作系统 文件访问方式提供统一方法   
+    RenderEngine 组织渲染流程 为app提供渲染接口
 
 
 ### libjson

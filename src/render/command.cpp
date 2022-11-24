@@ -86,6 +86,7 @@ void TextRenderCommand::putParams(std::wstring text , float left , float bottom)
     glBindVertexArray(0);
 }
 
+
 void TextRenderCommand::runCommands(){
     auto shader = engine_->textRenderHelper_->textRenderShader_;
     shader.useShader();
