@@ -13,8 +13,15 @@
 #include <streambuf>
 #include <codecvt>
 
+const int TEXTURE_FILE_CHANNEL_UNKNOW = -1;
 const int TEXTURE_FILE_CHANNEL_RGB = 3;
 const int TEXTURE_FILE_CHANNEL_ARGB = 4;
+
+struct TextureFileConfig{
+    int width = 0;
+    int height = 0;
+    int channel = TEXTURE_FILE_CHANNEL_UNKNOW;
+};
 
 class AndroidAssetManager;
 
@@ -28,7 +35,7 @@ public:
     virtual std::wstring readTextFile(std::string path);
 
     // read png file 
-    virtual int readTextureFile(std::string path ,long &filesize, uint8_t *data);
+    virtual uint8_t* readTextureFile(std::string path ,TextureFileConfig &fileConfig);
 
     AssetManager(){
         Logi("asset_manager" , "asset manager construct");

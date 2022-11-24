@@ -71,4 +71,5 @@ test_asset:asset_test_run
 
 clean:
 	rm -f ${BUILD_DIR}/*.o 
+	rm -f ${BUILD_DIR}/*.exe
 	rm -f ${BUILD_DIR}/main.exe

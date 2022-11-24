@@ -23,12 +23,14 @@ std::wstring AssetManager::readTextFile(std::string path){
     return readFileAsWstring(filePath.c_str());
 }
 
-int AssetManager::readTextureFile(std::string path ,long &filesize, uint8_t *data){
+uint8_t* AssetManager::readTextureFile(std::string path ,TextureFileConfig &fileConfig){
     std::string filePath = assetRootDir() + path;
     Logi("asset" , "read file path %s" , filePath.c_str());
-    
-    
-    return 0;
+
+    uint8_t *data = stbi_load(filePath.c_str() ,
+                        &fileConfig.width , 
+                        &fileConfig.height , &fileConfig.channel , 0);
+    return data;
 }
 
 std::wstring AndroidAssetManager::readFileToText(std::string path){
