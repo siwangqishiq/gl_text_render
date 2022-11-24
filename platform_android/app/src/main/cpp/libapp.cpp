@@ -1,12 +1,17 @@
 #include <jni.h>
 #include <string>
 #include <android/log.h>
+#include <android/bitmap.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 #include <memory>
 
 #include "application.hpp"
 
 #define  LOG_TAG    "textrender"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
+AAssetManager *AndroidAssetManagerInstance = nullptr;
 
 class AndroidApplication : public Application{
 };
@@ -50,4 +55,11 @@ JNIEXPORT void JNICALL
 Java_panyi_xyz_textrender_NativeBridge_resize(JNIEnv *env, jclass clazz, jint width, jint height) {
     LOGI("app resize %d , %d" , width , height);
     app->onResize(width , height);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_panyi_xyz_textrender_NativeBridge_setAndroidAssetManager(JNIEnv *env, jclass clazz,
+                                                              jobject mgr) {
+    AndroidAssetManagerInstance = AAssetManager_fromJava(env , mgr);
 }

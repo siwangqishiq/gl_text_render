@@ -26,15 +26,17 @@ add_library( # Sets the name of the library.
         ${SRC_DIR}/render/render.cpp
         ${SRC_DIR}/render/command.cpp
         ${SRC_DIR}/render/vram.cpp
+        ${SRC_DIR}/resource/asset_manager.cpp
         )
 
-set(OPENGL_LIB GLESv3)
+set(opengl_lib GLESv3)
 
-find_library(
-        log-lib
-        log)
+find_library(log_lib log)
 
 target_link_libraries( # Specifies the target library.
         textrender
-        ${log-lib}
-        ${OPENGL_LIB})
+        ${log_lib}
+        ${opengl_lib}
+        android
+        jnigraphics
+        )
