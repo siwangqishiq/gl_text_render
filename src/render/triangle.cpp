@@ -21,6 +21,7 @@ void Triangle::init(){
     #else
     "#version 330 core\n"
     #endif
+    "precision mediump float;"
     "out vec4 FragColor;"
     "void main(){\n"
     "   FragColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"

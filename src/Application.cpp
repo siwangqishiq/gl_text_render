@@ -54,7 +54,11 @@ void Application::onInit(){
     triangleDemo_->init();
     
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
-    // std::wcout <<"file len" << fileContent.length() <<  fileContent << std::endl;
+    // Logi("asset" , "test.txt szie: %d \n content: %s" , 
+    //         fileContent.size() , fileContent.c_str());
+    TextureFileConfig config;
+    AssetManager::getInstance()->readTextureFile("lan.jpg", config);
+
 }
 
 void Application::onTrick(){

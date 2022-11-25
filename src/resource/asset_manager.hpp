@@ -16,10 +16,13 @@
 const int TEXTURE_FILE_CHANNEL_UNKNOW = -1;
 const int TEXTURE_FILE_CHANNEL_RGB = 3;
 const int TEXTURE_FILE_CHANNEL_ARGB = 4;
+const int TEXTURE_FILE_CHANNEL_RGBA = 5;
+
 
 struct TextureFileConfig{
     int width = 0;
     int height = 0;
+    long dataSize = 0;
     int channel = TEXTURE_FILE_CHANNEL_UNKNOW;
 };
 
@@ -35,7 +38,8 @@ public:
     virtual std::wstring readTextFile(std::string path);
 
     // read png file 
-    virtual uint8_t* readTextureFile(std::string path ,TextureFileConfig &fileConfig);
+    virtual std::unique_ptr<uint8_t> readTextureFile(std::string path ,
+                TextureFileConfig &fileConfig);
 
     AssetManager(){
         Logi("asset_manager" , "asset manager construct");
@@ -72,6 +76,8 @@ protected:
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <android/bitmap.h>
+#include <android/imagedecoder.h>
 extern AAssetManager *AndroidAssetManagerInstance;
 
 /**
@@ -82,6 +88,14 @@ extern AAssetManager *AndroidAssetManagerInstance;
 class AndroidAssetManager : public AssetManager{
 public:
     virtual std::wstring readTextFile(std::string path);
+
+    virtual std::unique_ptr<uint8_t> readTextureFile(std::string path ,
+                                                      TextureFileConfig &fileConfig);
+
+private:
+    std::unique_ptr<uint8_t> readTextureFileByImageDecoder(std::string path ,TextureFileConfig &fileConfig);
+
+    std::unique_ptr<uint8_t> readTextureFileByStbi(std::string path ,TextureFileConfig &fileConfig);
 };
 
 #endif
