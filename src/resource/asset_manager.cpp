@@ -32,8 +32,8 @@ std::unique_ptr<uint8_t> AssetManager::readTextureFile(std::string path ,
     uint8_t *data = stbi_load(filePath.c_str() ,
                         &fileConfig.width , 
                         &fileConfig.height , &fileConfig.channel , 0);
-
     fileConfig.dataSize = fileConfig.width * fileConfig.height * fileConfig.channel;
+    Logi("asset" , "read file size : %d , %d , %d" , fileConfig.width , fileConfig.height , fileConfig.channel);
     return std::unique_ptr<uint8_t>(data);
 }
 
@@ -81,7 +81,6 @@ std::unique_ptr<uint8_t> AndroidAssetManager::readTextureFile(std::string path ,
 
 std::unique_ptr<uint8_t> AndroidAssetManager::readTextureFileByImageDecoder(std::string path ,TextureFileConfig &fileConfig){
 #if __ANDROID_MIN_SDK_VERSION__ >= 30
-
     Logi("asset" , "decode image using image decoder");
     const char *filePath = path.c_str();
     Logi("asset" , "file path : %s" , filePath);
@@ -129,14 +128,24 @@ std::unique_ptr<uint8_t> AndroidAssetManager::readTextureFileByImageDecoder(std:
     AAsset_close(asset);
     return pixels;
 #else
+    int minSdk = __ANDROID_API__ ;
+    Logi("asset" , "decode image using image decoder min version %d" , __ANDROID_API__ );
     return nullptr;
 #endif
 }
 
 std::unique_ptr<uint8_t> AndroidAssetManager::readTextureFileByStbi(std::string path ,TextureFileConfig &fileConfig){
     Logi("asset" , "decode image using stbi library");
+    auto assetFile  = AAssetManager_open(AndroidAssetManagerInstance , path.c_str() , AASSET_MODE_STREAMING);
+    size_t fileSize = AAsset_getLength(assetFile);
+    auto contentBuf = std::unique_ptr<char []>(new char[fileSize]);
+    AAsset_read(assetFile, contentBuf.get() , fileSize);
+    AAsset_close(assetFile);
 
-    return nullptr;
+    uint8_t *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(contentBuf.get()), fileSize , &fileConfig.width ,
+                                          &fileConfig.height , &fileConfig.channel, 0);
+    fileConfig.dataSize = fileConfig.width * fileConfig.height * fileConfig.channel;
+    return std::unique_ptr<uint8_t>(data);
 }
 #endif
 

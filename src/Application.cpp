@@ -5,6 +5,7 @@
 #include "glheader.hpp"
 #include "render/render.hpp"
 #include "resource/asset_manager.hpp"
+#include "render/texture.hpp"
 
 void Application::onFree(){
     Logi(TAG , "app onFree");
@@ -56,9 +57,14 @@ void Application::onInit(){
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
     // Logi("asset" , "test.txt szie: %d \n content: %s" , 
     //         fileContent.size() , fileContent.c_str());
-    TextureFileConfig config;
-    AssetManager::getInstance()->readTextureFile("lan.jpg", config);
+    
+    // TextureFileConfig config;
+    // AssetManager::getInstance()->readTextureFile("lan.jpg", config);
+    // Logi("asset" , "image info width : %d , height %d , channel : %d , datasize : %d",
+    //      config.width , config.height , config.channel , config.dataSize);
 
+    auto info1 = TextureManager::getInstance()->acquireTexture("text/font_texture_0.png");
+    auto info2 = TextureManager::getInstance()->acquireTexture("text/font_texture_1.png");
 }
 
 void Application::onTrick(){
@@ -82,12 +88,12 @@ void Application::onSceneUpdate(){
     float x = 0;
     float y = 0;
 
-    for(;y < screenHeight_ ;y += 40.0f){
-        x = 0.0f;
-        for(; x < screenWidth_ ; x += 50.0f){
-            renderEngine_->renderText(L"梅西" , x , y);
-        }
-    }
+//    for(;y < screenHeight_ ;y += 40.0f){
+//        x = 0.0f;
+//        for(; x < screenWidth_ ; x += 50.0f){
+//            renderEngine_->renderText(L"梅西" , x , y);
+//        }
+//    }
 }
 
 

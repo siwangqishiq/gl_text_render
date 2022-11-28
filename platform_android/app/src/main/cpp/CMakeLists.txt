@@ -27,6 +27,7 @@ add_library( # Sets the name of the library.
         ${SRC_DIR}/render/command.cpp
         ${SRC_DIR}/render/vram.cpp
         ${SRC_DIR}/resource/asset_manager.cpp
+        ${SRC_DIR}/render/texture.cpp
         )
 
 set(opengl_lib GLESv3)
