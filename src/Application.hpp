@@ -17,8 +17,11 @@ class Application {
 public:
     const std::string TAG = "Application"; 
 
-    int screenWidth_ = 800;
-    int screenHeight_ = 600;
+    int viewWidth_ = 800;
+    int viewHeight_ = 600;
+
+    int screenWidth_ = 0;
+    int screenHeight_ = 0;
     
     void onInit();
 
@@ -47,4 +50,7 @@ private:
 
     //for test
     std::shared_ptr<Triangle> triangleDemo_ = nullptr;
+
+    float x_ = 0.0f;
+    float y_ = 0.0f;
 };

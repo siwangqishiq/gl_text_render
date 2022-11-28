@@ -57,7 +57,7 @@ void Application::onInit(){
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
     // Logi("asset" , "test.txt szie: %d \n content: %s" , 
     //         fileContent.size() , fileContent.c_str());
-    
+
     // TextureFileConfig config;
     // AssetManager::getInstance()->readTextureFile("lan.jpg", config);
     // Logi("asset" , "image info width : %d , height %d , channel : %d , datasize : %d",
@@ -69,6 +69,8 @@ void Application::onInit(){
 
 void Application::onTrick(){
     // Log(TAG , "app trick");
+
+    long timeStart = currentTimeMillis();
     
     if(renderEngine_ == nullptr){
         return;
@@ -80,20 +82,32 @@ void Application::onTrick(){
     //gl commands run
     renderEngine_->render();
 
+    long timeEnded = currentTimeMillis();
+    Logi(TAG , "frame cost time : %ld" , (timeEnded - timeStart));
+
     // triangleDemo_->trick(renderEngine_->normalMatrix_);
     // Logi(TAG , "time %lld" , currentTimeMillis());
 }
 
 void Application::onSceneUpdate(){
-    float x = 0;
-    float y = 0;
+    // float x = x_;
 
-//    for(;y < screenHeight_ ;y += 40.0f){
-//        x = 0.0f;
-//        for(; x < screenWidth_ ; x += 50.0f){
-//            renderEngine_->renderText(L"梅西" , x , y);
-//        }
-//    }
+    float x = 0.0f;
+    float y = 0.0f;
+
+    renderEngine_->renderText(L"梅西" , x_ , y_);
+    for(;y < viewHeight_ ;y += 40.0f){
+        x = 0.0f;
+        for(; x < viewWidth_ ; x += 50.0f){
+            renderEngine_->renderText(L"梅西" , x , y);
+        }
+    }
+
+    x_ += 1.0f;
+    if(x_ > viewWidth_){
+        x_ = 0.0f;
+        y_ += 20.0f;
+    }
 }
 
 

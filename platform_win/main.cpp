@@ -38,8 +38,8 @@ int main(int argc , char *argv[]){
     std::shared_ptr<WinApplication> app = std::make_shared<WinApplication>();
 
     GLFWwindow* window = glfwCreateWindow(
-                            app->screenWidth_, 
-                            app->screenHeight_, 
+                            app->viewWidth_, 
+                            app->viewHeight_, 
                             "run", nullptr, nullptr);
     
     if (window == nullptr) {
@@ -64,12 +64,12 @@ int main(int argc , char *argv[]){
     }
     
     //force call resize
-    app->onResize(app->screenWidth_ , app->screenHeight_);
+    app->onResize(app->viewWidth_ , app->viewHeight_);
     app->init();
     while (!glfwWindowShouldClose(window)) {
         // std::cout << "tick" << std::endl;
         app->update();
-
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }//end while

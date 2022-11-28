@@ -29,7 +29,7 @@ void RenderEngine::clearRenderCommands(){
 }
 
 void RenderEngine::onScreenResize(){
-    resetNormalMat(appContext_->screenWidth_ , appContext_->screenHeight_);
+    resetNormalMat(appContext_->viewWidth_ , appContext_->viewHeight_);
     glViewport(0 , 0 , appContext_->screenWidth_ , appContext_->screenHeight_);
 }
 
