@@ -451,11 +451,26 @@ void testFixBug1(){
 }
 
 int main(){
-    testJsonObject();
-    testJsonArray();
-    testJsonParse();
-    testJsonArrayParse();
-    testFixBug1();
+    // testJsonObject();
+    // testJsonArray();
+    // testJsonParse();
+    // testJsonArrayParse();
+    // testFixBug1();
+
+
+    Test("test long json string" , [](){
+        std::wstring str = ReadTextFileAsWstring("char_config.json");
+        std::cout << "str size " << str.size() << std::endl;
+        JsonParser parser;
+        auto json = parser.parseJsonObject(str);
+        auto jsonList = json->getJsonArray("list");
+        std::cout << "jsonList size " << jsonList->size() << std::endl;
+
+        for(int i = 0 ; i < jsonList->size();i++){
+            auto itemJson = jsonList->getJsonObject(i);
+            std::wcout << itemJson->getString("texture") << std::endl;
+        }//end for i
+    });
 
     utest.testAll();
     return 0;

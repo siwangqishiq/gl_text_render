@@ -3,6 +3,9 @@
 #include "log.hpp"
 #include "command.hpp"
 #include "vram.hpp"
+#include "texture.hpp"
+#include "resource/asset_manager.hpp"
+#include "../libjson/json.hpp"
 
 void RenderEngine::render(){
     glClearColor(0.0f , 0.0f , 0.0f , 1.0f);
@@ -43,6 +46,8 @@ void RenderEngine::loadTextRenderResource(){
     Logi(TAG , "render init loadTextRenderResource");
     textRenderHelper_ = std::make_shared<TextRenderHelper>();
     textRenderHelper_->loadRes(*this);
+
+
 }
 
 void RenderEngine::resetNormalMat(float w , float h){
@@ -82,4 +87,48 @@ void TextRenderHelper::loadRes(RenderEngine &engine){
     textRenderShader_ = ShaderManager::getInstance()->loadAssetShader("text_render" 
                                 , "shader/render_text_vert.glsl"
                                 , "shader/render_text_frag.glsl");
+    
+    buildTextCharConfig();
+}
+
+//读取字符配置
+void TextRenderHelper::buildTextCharConfig(){
+
+    std::wstring charConfigStr = AssetManager::getInstance()->readTextFile("text/char_config.json");
+
+    JsonParser parser;
+    auto configJson = parser.parseJsonObject(charConfigStr);
+    auto charJsonList = configJson->getJsonArray("list");
+    Logi("text_render" , "charJsonList size : %d" , charJsonList->size());
+
+    charInfoMaps_.clear();
+
+    for(int i = 0 ;  i< charJsonList->size();i++){
+        auto itemJson = charJsonList->getJsonObject(i);
+        std::shared_ptr<CharInfo> info = std::make_shared<CharInfo>();
+        info->value = itemJson->getString("value");
+        info->width = itemJson->getInt("width");
+        info->height = itemJson->getInt("height");
+        auto texCoordsArray = itemJson->getJsonArray("texCoords");
+        for(int i = 0 ; i < 4; i++){
+            info->textureCoords[i] = texCoordsArray->getFloat(i);
+        }//end for i
+
+        //load texture
+        auto textureName = itemJson->getString("texture");
+        // std::string textureName = ToByteString(L"font_texture_0.png");
+        // Logi("text_render" , "textureName coord: %f , %f , %f , %f" , 
+        //     info->textureCoords[0] ,info->textureCoords[1],
+        //     info->textureCoords[2] ,info->textureCoords[3] );
+        // Logi("text_render" , "texture value size %d" , info->value.size());
+        Logi("text_render" , "texture name size %d" , textureName.size());
+        // auto textureInfo = TextureManager::getInstance()->acquireTexture("text/" + textureName);
+        // info->textureId = textureInfo->textureId;
+        // // Logi("text_render" , "textureId : %d" , info->textureId);
+        charInfoMaps_.insert(std::make_pair<>(info->value[0] , info));
+    }//end for i
+
+    Logi("text_render" , "charInfoMaps size : %d" , charInfoMaps_.size());
+    Logi("text_render" , "texture : %s" , 
+            TextureManager::getInstance()->allTextureInfos().c_str());
 }

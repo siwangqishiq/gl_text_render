@@ -34,6 +34,8 @@ public:
     std::shared_ptr<TextureInfo> acquireTexture(std::string textureFilePath);
 
     std::shared_ptr<TextureInfo> loadTexture(std::string textureFilePath);
+
+    std::string allTextureInfos();
 private:
     static std::shared_ptr<TextureManager> instance_;
 

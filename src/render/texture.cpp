@@ -73,3 +73,16 @@ std::shared_ptr<TextureInfo> TextureManager::acquireTexture(std::string textureF
     return loadTexture(textureFilePath);
 }
 
+std::string TextureManager::allTextureInfos(){
+    std::string infoString = std::to_string(textureBank_.size()) +" [";
+
+    // for(auto &p : textureBank_){
+    //     infoString += p.first;
+    //     infoString += p.second->textureId;
+    //     infoString += " ";
+    // }//end for each
+
+    infoString += "]";
+    return infoString;
+}
+

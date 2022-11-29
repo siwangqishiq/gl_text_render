@@ -17,6 +17,7 @@
 #include <vector>
 #include "glm/matrix.hpp"
 #include "render/shader.hpp"
+#include <unordered_map>
 
 
 class Application;
@@ -69,10 +70,23 @@ private:
     std::shared_ptr<TextRenderCommand> fetchTextRenderCommand(RenderEngine *engine);
 };
 
+//字符信息
+struct CharInfo{
+    std::wstring value; 
+    float width;
+    float height;
+    float textureCoords[4];
+    unsigned int textureId;
+};
+
 class TextRenderHelper{
 public:
     void loadRes(RenderEngine &engine);
 
     Shader textRenderShader_;
+private:
+    void buildTextCharConfig();
+
+    std::unordered_map<wchar_t , std::shared_ptr<CharInfo>> charInfoMaps_;
 };
 

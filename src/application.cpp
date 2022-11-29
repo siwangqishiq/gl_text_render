@@ -62,9 +62,9 @@ void Application::onInit(){
     // AssetManager::getInstance()->readTextureFile("lan.jpg", config);
     // Logi("asset" , "image info width : %d , height %d , channel : %d , datasize : %d",
     //      config.width , config.height , config.channel , config.dataSize);
-
-    auto info1 = TextureManager::getInstance()->acquireTexture("text/font_texture_0.png");
-    auto info2 = TextureManager::getInstance()->acquireTexture("text/font_texture_1.png");
+    
+    // auto info1 = TextureManager::getInstance()->acquireTexture("text/font_texture_0.png");
+    // auto info2 = TextureManager::getInstance()->acquireTexture("text/font_texture_1.png");
 }
 
 void Application::onTrick(){
@@ -81,7 +81,7 @@ void Application::onTrick(){
 
     //gl commands run
     renderEngine_->render();
-    
+
     triangleDemo_->trick(renderEngine_->normalMatrix_);
 
     long timeEnd = currentTimeMillis();
