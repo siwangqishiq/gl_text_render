@@ -115,15 +115,15 @@ void TextRenderHelper::buildTextCharConfig(){
         }//end for i
 
         //load texture
-        auto textureName = itemJson->getString("texture");
-        // std::string textureName = ToByteString(L"font_texture_0.png");
+        // auto textureName = itemJson->getString("texture");
+        std::string textureName = ToByteString(itemJson->getString("texture"));
         // Logi("text_render" , "textureName coord: %f , %f , %f , %f" , 
         //     info->textureCoords[0] ,info->textureCoords[1],
         //     info->textureCoords[2] ,info->textureCoords[3] );
         // Logi("text_render" , "texture value size %d" , info->value.size());
-        Logi("text_render" , "texture name size %d" , textureName.size());
-        // auto textureInfo = TextureManager::getInstance()->acquireTexture("text/" + textureName);
-        // info->textureId = textureInfo->textureId;
+        Logi("text_render" , "texture name  %s" , textureName.c_str());
+        auto textureInfo = TextureManager::getInstance()->acquireTexture("text/" + textureName);
+        info->textureId = textureInfo->textureId;
         // // Logi("text_render" , "textureId : %d" , info->textureId);
         charInfoMaps_.insert(std::make_pair<>(info->value[0] , info));
     }//end for i
