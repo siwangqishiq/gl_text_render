@@ -23,8 +23,8 @@ int main(int argc , char *argv[]){
 
 
     GLFWwindow* window = glfwCreateWindow(
-                            app->screenWidth_, 
-                            app->screenHeight_, 
+                            app->viewWidth_, 
+                            app->viewHeight_, 
                             "run", nullptr, nullptr);
     char *buf;
     glfwGetError((const char **)&buf);
