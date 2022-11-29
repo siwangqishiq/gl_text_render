@@ -162,7 +162,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
     while(readIndex < jsonStr.size()){
         auto ch = jsonStr[readIndex];
         
-        std::wcout << "read :" << ch << " state " << state << " read index " << readIndex << std::endl;
+        // std::wcout << "read :" << ch << " state " << state << " read index " << readIndex << std::endl;
         if(state == ParserState::INIT){//初始状态
             switch (ch){
                 case L'{':
@@ -267,6 +267,7 @@ int JsonParser::doParseObject(std::wstring &jsonStr ,int beginPostion){
                                 , readIndex, childParser.readEndPosition) < 0){
                                 return -1;
                             }
+                            readIndex--;
                         }
                     }
                     break;
@@ -494,7 +495,7 @@ int JsonParser::onReadStringItem(std::wstring &key , std::wstring &value , int &
         return -1;
     }
 
-    std::wcout << key << " = " << value << std::endl;
+    // std::wcout << key << " = " << value << std::endl;
     if(key == L""){
         return 0;
     }

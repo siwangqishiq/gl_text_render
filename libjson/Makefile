@@ -1,5 +1,5 @@
 test_compile : json_test.cpp utest.hpp json.hpp json.cpp
-	g++ json_test.cpp json.cpp -o test
+	g++ -std=c++14 json_test.cpp json.cpp -o test
 
 test : test_compile
 	./test

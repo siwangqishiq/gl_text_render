@@ -34,8 +34,8 @@ int main(int argc , char *argv[]){
     std::shared_ptr<MacApplication> app = std::make_shared<MacApplication>();
 
     GLFWwindow* window = glfwCreateWindow(
-                            app->screenWidth_, 
-                            app->screenHeight_, 
+                            app->viewWidth_, 
+                            app->viewHeight_, 
                             "run", nullptr, nullptr);
     
     if (window == nullptr) {

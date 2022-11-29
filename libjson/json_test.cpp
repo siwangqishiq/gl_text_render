@@ -390,7 +390,7 @@ void testJsonArrayParse(){
 }
 
 void testFixBug1(){
-    Test("object contain list" , [](){
+    Test("Test object contain list" , [](){
         auto _obj = JsonObject::create();
         auto _list = JsonArray::create();
         _obj->putJsonArray("list" , _list);
@@ -415,7 +415,7 @@ void testFixBug1(){
         Equal(5 , array->size());
     });
 
-    Test("object contain list2" , [](){
+    Test("Test object contain list2" , [](){
         auto _obj = JsonObject::create();
         auto _list = JsonArray::create();
         _obj->putJsonArray("list" , _list);
@@ -448,29 +448,32 @@ void testFixBug1(){
         auto array = json->getJsonArray("list");
         Equal(len , array->size());
     });
-}
 
-int main(){
-    // testJsonObject();
-    // testJsonArray();
-    // testJsonParse();
-    // testJsonArrayParse();
-    // testFixBug1();
-
-
-    Test("test long json string" , [](){
+    Test("Test long json string" , [](){
         std::wstring str = ReadTextFileAsWstring("char_config.json");
-        std::cout << "str size " << str.size() << std::endl;
+        // std::cout << "str size " << str.size() << std::endl;
         JsonParser parser;
         auto json = parser.parseJsonObject(str);
         auto jsonList = json->getJsonArray("list");
-        std::cout << "jsonList size " << jsonList->size() << std::endl;
+        // std::cout << "jsonList size " << jsonList->size() << std::endl;
 
         for(int i = 0 ; i < jsonList->size();i++){
             auto itemJson = jsonList->getJsonObject(i);
-            std::wcout << itemJson->getString("texture") << std::endl;
+            EqualWString(L"font_texture_0.png" , itemJson->getString("texture"));
+            // std::wcout << itemJson->getString("texture") << std::endl;
         }//end for i
     });
+}
+
+int main(){
+    testJsonObject();
+    testJsonArray();
+    testJsonParse();
+    testJsonArrayParse();
+    testFixBug1();
+
+
+   
 
     utest.testAll();
     return 0;
