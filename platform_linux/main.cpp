@@ -36,7 +36,13 @@ int main(int argc , char *argv[]){
         return -1;
     }
     glfwMakeContextCurrent(window);
-    // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetWindowUserPointer(window , &app);
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* windows_,int w,int h){
+        void* app_ = glfwGetWindowUserPointer(windows_);
+        std::shared_ptr<LinuxApplication> app= 
+            *(static_cast<std::shared_ptr<LinuxApplication> *>(app_));
+        app->onResize(w , h);
+    });
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -45,6 +51,7 @@ int main(int argc , char *argv[]){
         return -1;
     }
 
+    app->onResize(app->viewWidth_ , app->viewHeight_);
     app->init();
     while (!glfwWindowShouldClose(window)) {
         // std::cout << "tick" << std::endl;
