@@ -79,35 +79,7 @@ std::shared_ptr<TextRenderCommand> RenderEngine::fetchTextRenderCommand(RenderEn
 }
 
 void TextRenderHelper::loadRes(RenderEngine &engine){
-    //init shader
-    std::string vertSrc = 
-    #ifdef __ANDROID__
-    "#version 300 es\n"
-    #else
-    "#version 330 core\n"
-    #endif
-    "layout(location = 0) in vec3 a_position;\n"
-    "layout(location = 1) in vec2 a_texture;\n"
-    "uniform mat3 transMat;\n"
-    "out vec2 vUv;\n"
-    "void main() {\n"
-    "   gl_Position = vec4(transMat * a_position ,1.0f);\n"
-    "   vUv = a_texture;\n"
-    "}\n";
-
-    std::string fragSrc = 
-    #ifdef __ANDROID__
-    "#version 300 es\n"
-    #else
-    "#version 330 core\n"
-    #endif
-    "precision mediump float;"
-    "in vec2 vUv;"
-    "out vec4 outColor;"
-    "void main(){\n"
-    "   outColor = vec4(0.0f , 1.0f , 0.0f , 1.0f);\n"
-    "}\n";
-    
-    textRenderShader_ = ShaderManager::getInstance()
-                            .fetchShader("text_render" , vertSrc, fragSrc);
+    textRenderShader_ = ShaderManager::getInstance()->loadAssetShader("text_render" 
+                                , "shader/render_text_vert.glsl"
+                                , "shader/render_text_frag.glsl");
 }

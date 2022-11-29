@@ -8,6 +8,7 @@
 #include "glm/glm.hpp"
 #include <unordered_map>
 #include <map>
+#include <memory>
 
 const std::string TAG_SHADER = "shader";
 
@@ -69,12 +70,17 @@ class ShaderManager{
 private:
     std::map<std::string , Shader> shaderMap;
 
+    static std::shared_ptr<ShaderManager> instance_;
 public:
-    static ShaderManager& getInstance();
+    static std::shared_ptr<ShaderManager> getInstance();
 
-    Shader fetchShader(std::string shaderName , std::string vertexSrc , std::string frgSrc);
+    std::string readShaderSrc(std::string shaderPath);
 
-    Shader fetchShaderByPath(std::string shaderName , std::string vertexPath , std::string fragPath);
+    Shader loadAssetShader(std::string shaderName , std::string vertexPath , std::string frgPath);
+
+    Shader loadShader(std::string shaderName , std::string vertexSrc , std::string frgSrc);
+
+    Shader loadShaderByPath(std::string shaderName , std::string vertexPath , std::string fragPath);
 
     void clear();
 };

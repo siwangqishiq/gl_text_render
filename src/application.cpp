@@ -81,12 +81,12 @@ void Application::onTrick(){
 
     //gl commands run
     renderEngine_->render();
+    
+    triangleDemo_->trick(renderEngine_->normalMatrix_);
 
-    long timeEnded = currentTimeMillis();
-    Logi(TAG , "frame cost time : %ld" , (timeEnded - timeStart));
-
-    // triangleDemo_->trick(renderEngine_->normalMatrix_);
-    // Logi(TAG , "time %lld" , currentTimeMillis());
+    long timeEnd = currentTimeMillis();
+    auto deltaTime = timeEnd - timeStart;
+    // Logi(TAG , "frame cost time : %ld" , deltaTime);
 }
 
 void Application::onSceneUpdate(){

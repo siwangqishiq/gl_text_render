@@ -6,6 +6,7 @@
 #include <fstream>
 #include "glm/gtc/type_ptr.hpp"
 #include "log.hpp"
+#include "resource/asset_manager.hpp"
 
 std::string ReadAssetTextFile(std::string filename) {
     return std::string();
@@ -191,7 +192,8 @@ int Shader::findUniformLocation(std::string key){
 }
 
 //获取 或 创建出一个shader
-Shader ShaderManager::fetchShader(std::string shaderName , std::string vtxSrc , std::string frgSrc) {
+Shader ShaderManager::loadShader(std::string shaderName , 
+        std::string vtxSrc , std::string frgSrc) {
     if(shaderMap.find(shaderName) == shaderMap.end()){//not found shader create a new shader
         Logi("Shader" , "create a new shader %s " , shaderName.c_str());
         Shader shader = Shader::buildGPUProgram(vtxSrc , frgSrc);
@@ -202,7 +204,7 @@ Shader ShaderManager::fetchShader(std::string shaderName , std::string vtxSrc , 
 }
 
 //获取 或 创建出一个shader
-Shader ShaderManager::fetchShaderByPath(std::string shaderName , std::string vertexPath , std::string fragPath) {
+Shader ShaderManager::loadShaderByPath(std::string shaderName , std::string vertexPath , std::string fragPath) {
     if(shaderMap.find(shaderName) == shaderMap.end()){//not found shader create a new shader
         Logi("no found %s , create a new shader" , shaderName.c_str());
         Shader shader = Shader::buildGPUProgramAssetFile(vertexPath , fragPath);
@@ -226,13 +228,33 @@ void ShaderManager::clear() {
     Logi(TAG_SHADER ,"shader map size after clear %d" , shaderMap.size());
 }
 
-ShaderManager& ShaderManager::getInstance() {
-    static ShaderManager instance;
-    return instance;
+std::shared_ptr<ShaderManager> ShaderManager::getInstance() {
+    static std::shared_ptr<ShaderManager> instance_;
+    if(instance_ == nullptr){
+        instance_ = std::make_shared<ShaderManager>();
+    }
+    return instance_;
 }
 
 //从Asset中读取shader
 GLuint CreateGPUProgramByAsset(std::string vsFilePath , std::string fsFilePath){
     return CreateGPUProgram(ReadAssetTextFile(vsFilePath).c_str() ,
                             ReadAssetTextFile(fsFilePath).c_str());
+}
+
+std::string ShaderManager::readShaderSrc(std::string shaderPath){
+    std::string shadrHeadSrc =   
+    #ifdef __ANDROID__
+    "#version 300 es\n";
+    #else
+    "#version 330 core\n";
+    #endif
+    
+    auto shaderBodySrc = AssetManager::getInstance()->readTextFileAsString(shaderPath);
+    return shadrHeadSrc + shaderBodySrc;
+}
+
+Shader ShaderManager::loadAssetShader(std::string shaderName , 
+            std::string vertexPath , std::string frgPath){
+    return loadShader(shaderName , readShaderSrc(vertexPath) , readShaderSrc(frgPath));
 }

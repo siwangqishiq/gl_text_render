@@ -2,6 +2,7 @@ CC := g++
 
 DIR := ..
 SRC_DIR := ../src
+ASSET_DIR := ../assets
 WIN_DIR := .
 BUILD_DIR := build
 INCLUDE_DIR := ../include
@@ -40,13 +41,19 @@ ${BUILD_DIR}/shader.o:${SRC_DIR}/render/shader.cpp ${SRC_DIR}/render/shader.hpp
 ${BUILD_DIR}/command.o:${SRC_DIR}/render/command.cpp ${SRC_DIR}/render/command.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/command.cpp -o ${BUILD_DIR}/command.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
 
-${BUILD_DIR}/triangle.o:${SRC_DIR}/render/triangle.cpp ${SRC_DIR}/render/triangle.hpp
+${BUILD_DIR}/triangle.o:${SRC_DIR}/render/triangle.cpp \
+						${SRC_DIR}/render/triangle.hpp \
+						${ASSET_DIR}/shader/triangle_vert.glsl \
+						${ASSET_DIR}/shader/triangle_frag.glsl 
 	${CC} -std=${STD} -c ${SRC_DIR}/render/triangle.cpp -o ${BUILD_DIR}/triangle.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 
 
 ${BUILD_DIR}/vram.o:${SRC_DIR}/render/vram.cpp ${SRC_DIR}/render/vram.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/vram.cpp -o ${BUILD_DIR}/vram.o -I ${INCLUDE_DIR} -I ${SRC_DIR}
 
-${BUILD_DIR}/render.o:${SRC_DIR}/render/render.cpp ${SRC_DIR}/render/render.hpp
+${BUILD_DIR}/render.o:${SRC_DIR}/render/render.cpp \
+						${SRC_DIR}/render/render.hpp \
+						${ASSET_DIR}/shader/render_text_vert.glsl \
+						${ASSET_DIR}/shader/render_text_frag.glsl 
 	${CC} -std=${STD} -c ${SRC_DIR}/render/render.cpp -o ${BUILD_DIR}/render.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 
 
 ${BUILD_DIR}/texture.o:${SRC_DIR}/render/texture.cpp ${SRC_DIR}/render/texture.hpp

@@ -2,35 +2,13 @@
 #include "log.hpp"
 
 void Triangle::init(){
-    std::string vertSrc = 
-    #ifdef __ANDROID__
-    "#version 300 es\n"
-    #else
-    "#version 330 core\n"
-    #endif
-    "layout(location = 0) in vec2 aPos;"
-    "uniform mat3 transMat;\n"
-    "void main() {\n"
-    "   // gl_Position = vec4(aPos , 1.0f , 1.0f);\n"
-    "   gl_Position = vec4(transMat * vec3(aPos , 1.0f) , 1.0);\n"
-    "}\n";
-
-    std::string fragSrc = 
-    #ifdef __ANDROID__
-    "#version 300 es\n"
-    #else
-    "#version 330 core\n"
-    #endif
-    "precision mediump float;"
-    "out vec4 FragColor;"
-    "void main(){\n"
-    "   FragColor = vec4(1.0f , 1.0f , 0.0f , 1.0f);\n"
-    "}\n";
-    
-    shader = ShaderManager::getInstance().fetchShader("triangle_render" , vertSrc, fragSrc);
+    shader = ShaderManager::getInstance()->loadAssetShader("triangle_render"
+                , "shader/triangle_vert.glsl" 
+                , "shader/triangle_frag.glsl");
     
     glGenVertexArrays(1 , &vao);
     glGenBuffers(1 , &vbo);
+    
     Logi("test" , "vao = %d",vao);
     Logi("test" , "vbo = %d",vbo);
 
@@ -65,5 +43,5 @@ void Triangle::trick(glm::mat3 &normalMat){
 }
 
 void Triangle::free(){
-    ShaderManager::getInstance().clear();
+    ShaderManager::getInstance()->clear();
 }

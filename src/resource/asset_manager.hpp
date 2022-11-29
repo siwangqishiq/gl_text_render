@@ -40,6 +40,10 @@ public:
     // read png file 
     virtual std::unique_ptr<uint8_t> readTextureFile(std::string path ,
                 TextureFileConfig &fileConfig);
+    
+    inline std::string readTextFileAsString(std::string path){
+        return toByteString(readTextFile(path));
+    }
 
     AssetManager(){
         Logi("asset_manager" , "asset manager construct");
