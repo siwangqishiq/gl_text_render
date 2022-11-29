@@ -20,8 +20,8 @@ public:
     int viewWidth_ = 800;
     int viewHeight_ = 600;
 
-    int screenWidth_ = 0;
-    int screenHeight_ = 0;
+    int screenWidth_ = viewWidth_;
+    int screenHeight_ = viewHeight_;
     
     void onInit();
 

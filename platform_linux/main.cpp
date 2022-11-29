@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Application.hpp"
+#include "application.hpp"
 
 class LinuxApplication : public Application{
 };
@@ -26,6 +26,9 @@ int main(int argc , char *argv[]){
                             app->screenWidth_, 
                             app->screenHeight_, 
                             "run", nullptr, nullptr);
+    char *buf;
+    glfwGetError((const char **)&buf);
+    std::cout << buf << std::endl;
     
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;

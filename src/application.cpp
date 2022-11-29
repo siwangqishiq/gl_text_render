@@ -1,4 +1,4 @@
-#include "Application.hpp"
+#include "application.hpp"
 #include "log.hpp"
 
 //window surface header
