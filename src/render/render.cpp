@@ -121,7 +121,7 @@ void TextRenderHelper::buildTextCharConfig(){
         //     info->textureCoords[0] ,info->textureCoords[1],
         //     info->textureCoords[2] ,info->textureCoords[3] );
         // Logi("text_render" , "texture value size %d" , info->value.size());
-        Logi("text_render" , "texture name  %s" , textureName.c_str());
+        // Logi("text_render" , "texture name  %s" , textureName.c_str());
         auto textureInfo = TextureManager::getInstance()->acquireTexture("text/" + textureName);
         info->textureId = textureInfo->textureId;
         // // Logi("text_render" , "textureId : %d" , info->textureId);

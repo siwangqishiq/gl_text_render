@@ -65,7 +65,7 @@ int exportFonts(){
     std::cout << "char file size : " << content.length() << std::endl;
 
     const int outTexWidth = 2048;
-    const int outTexHeight = 2048;
+    const int outTexHeight = 4 * 2048;
 
     uint32_t *textureDst = new uint32_t[outTexWidth * outTexHeight];
 
@@ -120,7 +120,7 @@ int exportFonts(){
         charInfoJson->putString("texture" , ToWideString(currentTexFileName));
         //纹理坐标计算
         float texLeft = (float)left / (float)outTexWidth;
-        float texTop = (float)top / (float)outTexHeight;
+        float texTop = (float)(top + (fontSize - fontHeight)) / (float)outTexHeight;
         float texWidth = (float)fontWidth / (float)outTexWidth;
         float texHeight = (float)fontHeight / (float)outTexHeight;
 

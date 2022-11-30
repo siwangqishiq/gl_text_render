@@ -264,7 +264,7 @@ enum ParserState{
     READ_ARRAY_VALUE = 9,
     READ_ARRAY_STRING_VALUE = 10,
     END_READ_ARRAY_VALUE = 11,
-
+    
     END = 400
 };
 
