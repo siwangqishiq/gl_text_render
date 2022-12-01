@@ -46,8 +46,6 @@ void RenderEngine::loadTextRenderResource(){
     Logi(TAG , "render init loadTextRenderResource");
     textRenderHelper_ = std::make_shared<TextRenderHelper>();
     textRenderHelper_->loadRes(*this);
-
-
 }
 
 void RenderEngine::resetNormalMat(float w , float h){
@@ -76,7 +74,8 @@ void RenderEngine::renderText(std::wstring text , float left , float bottom){
 }
 
 std::shared_ptr<TextRenderCommand> RenderEngine::fetchTextRenderCommand(RenderEngine *engine){
-    //new a new instace later use pool to reuse
+    // new a new instace 
+    // later use pool to reuse
     auto newCmd = 
         std::make_shared<TextRenderCommand>(this);
     newCmd->used = true;
@@ -89,6 +88,10 @@ void TextRenderHelper::loadRes(RenderEngine &engine){
                                 , "shader/render_text_frag.glsl");
     
     buildTextCharConfig();
+}
+
+std::shared_ptr<CharInfo> TextRenderHelper::findCharInfo(wchar_t &ch){
+    return charInfoMaps_[ch];
 }
 
 //读取字符配置
@@ -131,4 +134,20 @@ void TextRenderHelper::buildTextCharConfig(){
     Logi("text_render" , "charInfoMaps size : %d" , charInfoMaps_.size());
     Logi("text_render" , "texture : %s" , 
             TextureManager::getInstance()->allTextureInfos().c_str());
+
+    addSpecialTextCharInfo();
+}
+
+//添加特殊字符配置
+void TextRenderHelper::addSpecialTextCharInfo(){
+    auto blankCharInfo = std::make_shared<CharInfo>();
+    blankCharInfo->textureId = 0;
+    blankCharInfo->value = L" ";
+    blankCharInfo->width = SPACE_WIDTH;
+    blankCharInfo->height = 0.0f;
+    blankCharInfo->textureCoords[0] = 0.0f;
+    blankCharInfo->textureCoords[1] = 0.0f;
+    blankCharInfo->textureCoords[2] = 0.0f;
+    blankCharInfo->textureCoords[3] = 0.0f;
+    charInfoMaps_.insert(std::make_pair<>(blankCharInfo->value[0] , blankCharInfo));
 }

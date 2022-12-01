@@ -81,8 +81,9 @@ void Application::onTrick(){
 
     //gl commands run
     renderEngine_->render();
-
-    triangleDemo_->trick(renderEngine_->normalMatrix_);
+    
+    // for test
+    // triangleDemo_->trick(renderEngine_->normalMatrix_);
 
     long timeEnd = currentTimeMillis();
     auto deltaTime = timeEnd - timeStart;
@@ -95,19 +96,23 @@ void Application::onSceneUpdate(){
     float x = 0.0f;
     float y = 0.0f;
 
-    renderEngine_->renderText(L"梅西" , x_ , y_);
-    for(;y < viewHeight_ ;y += 40.0f){
-        x = 0.0f;
-        for(; x < viewWidth_ ; x += 50.0f){
-            renderEngine_->renderText(L"梅西" , x , y);
-        }
-    }
+    renderEngine_->renderText(L"你好,世界,Hello World" , x_ , y_);
+    // for(;y < viewHeight_ ;y += 40.0f){
+    //     x = 0.0f;
+    //     for(; x < viewWidth_ ; x += 50.0f){
+    //         renderEngine_->renderText(L"梅西" , x , y);
+    //     }
+    // }
 
-    x_ += 1.0f;
+    x_ += 0.02f;
     if(x_ > viewWidth_){
         x_ = 0.0f;
         y_ += 20.0f;
     }
+
+    renderEngine_->renderText(L"一二三四五六七" , 100, 300 + 80);
+    renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300);
+    renderEngine_->renderText(L"从此君王不早朝" , 100, 300 - 80);
 }
 
 

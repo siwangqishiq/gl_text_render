@@ -79,13 +79,19 @@ struct CharInfo{
     unsigned int textureId;
 };
 
+const float SPACE_WIDTH = 16.0f;
+
 class TextRenderHelper{
 public:
     void loadRes(RenderEngine &engine);
 
     Shader textRenderShader_;
+
+    std::shared_ptr<CharInfo> findCharInfo(wchar_t &ch);
 private:
     void buildTextCharConfig();
+
+    void addSpecialTextCharInfo();
 
     std::unordered_map<wchar_t , std::shared_ptr<CharInfo>> charInfoMaps_;
 };

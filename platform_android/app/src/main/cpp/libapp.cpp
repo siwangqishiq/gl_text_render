@@ -54,6 +54,8 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_panyi_xyz_textrender_NativeBridge_resize(JNIEnv *env, jclass clazz, jint width, jint height) {
     LOGI("app resize %d , %d" , width , height);
+//    app->viewWidth_ = width;
+//    app->viewHeight_ = height;
     app->onResize(width , height);
 }
 

@@ -8,6 +8,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+const float FONT_DEFAULT_SIZE = 64.0f;
+
 
 void blit(unsigned char *src , uint32_t *dst , int x , int y , int width , int height ,
             int strideWidth){
@@ -52,7 +54,7 @@ int exportFonts(){
         return -1;
     }
 
-    const int fontSize = 64;
+    const int fontSize = FONT_DEFAULT_SIZE;
 
     FT_Set_Pixel_Sizes(face , fontSize, fontSize);
 
@@ -86,7 +88,7 @@ int exportFonts(){
             continue;
         }
 
-        std::wcout << "left " << left << "  top " << top << std::endl;
+        // std::wcout << "left " << left << "  top " << top << std::endl;
 
         if (FT_Load_Char(face, ch, FT_LOAD_RENDER)){
             std::wcout<< ch << " ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
@@ -124,6 +126,10 @@ int exportFonts(){
         float texWidth = (float)fontWidth / (float)outTexWidth;
         float texHeight = (float)fontHeight / (float)outTexHeight;
 
+        if(texLeft >= 1.0){
+            std::wcout << "left " << left << "  top " << top << std::endl;
+        }
+
         auto texCoords = JsonArray::create();
         texCoords->pushFloat(texLeft);
         texCoords->pushFloat(texTop);
@@ -133,7 +139,7 @@ int exportFonts(){
         
         charListArray->pushJsonObject(charInfoJson);
 
-        if(left + fontSize > outTexWidth){
+        if(left + fontSize >= outTexWidth){
             left = 0;
             if(top + fontSize > outTexHeight - fontSize){
                 std::cout << "need create a new texture file" << std::endl;
@@ -205,38 +211,7 @@ int printChar(FT_Library *ftLib , wchar_t wChar){
     return 0;
 }
 
-
-
 int main(){
     exportFonts();
-
-    // FT_Library ftLib;
-    // if (FT_Init_FreeType(&ftLib)){
-    //     std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-    //     return -1;
-    // }
-    
-    // std::wstring str = L"陶馨兰";
-
-    // //auto p = wStr.c_str();
-    // for(int i = 0 ; i < str.size();i++){
-    //     printChar(&ftLib , str[i]);
-    //     // std::cout << p[i] << std::endl;
-    // }//end for i
-    
-    // FT_Done_FreeType(ftLib);
-
-    // int width = 100;
-    // int height = 100;
-    // uint32_t *data = (uint32_t *)malloc(width * height * sizeof(uint32_t));
-
-    // for(int i = 0 ; i < height ; i++){
-    //     for(int j = 0 ; j < width ;j++){
-    //         // a r g b
-    //         data[i * width + j] = 0xFF000000;
-    //     }
-    // }
-
-    // stbi_write_png("test.png" , 100, 100, 4 , data , 0);
     return 0;
 }
