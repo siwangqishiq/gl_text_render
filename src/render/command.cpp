@@ -3,6 +3,7 @@
 #include "log.hpp"
 #include "vram.hpp"
 #include "../../libjson/json.hpp"
+#include "common.hpp"
 
 
 TextPaint TextRenderCommand::defaultTextPaint;
@@ -49,9 +50,11 @@ bool TextRenderCommand::isSymbol(std::wstring ch){
 void TextRenderCommand::putParams(std::wstring text 
         ,float left , float bottom
         ,TextPaint &paint){
-    textColor_ = paint.textColor;
-    
-    vertexCount_ = 6 * text.length();
+    paint_ = paint;
+
+    const int vertCountPerChar = 6;//一个字符由几个顶点确定
+
+    vertexCount_ = vertCountPerChar * text.length();
     const int attrCount = 3 + 2;
     int requestSize = vertexCount_ * attrCount * sizeof(float);
     int allocateSize = 0;
@@ -68,7 +71,7 @@ void TextRenderCommand::putParams(std::wstring text
     float y = bottom;
 
     std::vector<float> buf(vertexCount_ * attrCount);
-    const int attrPerChar = 30;
+    const int attrPerChar = attrCount * vertCountPerChar;
 
     auto textRenderHelper = engine_->textRenderHelper_;
     for(int i = 0 ; i < text.length() ;i++){
@@ -79,9 +82,12 @@ void TextRenderCommand::putParams(std::wstring text
         }
 
         fontTextureId_ = charInfoPtr->textureId;
+        
+        const float sizeScale = paint_.textSizeScale;
+        // Logi("text_render" , "size scale %f" , sizeScale);
 
-        float charRealWidth = charInfoPtr->width * paint.textSizeScale;
-        float charRealHeight = charInfoPtr->height * paint.textSizeScale;
+        float charRealWidth = charInfoPtr->width * sizeScale;
+        float charRealHeight = charInfoPtr->height * sizeScale;
         // Logi("text_render" , "x y %f %f charRealWidth %f , charRealHeight %f" ,
         //     x, y ,charRealWidth,charRealHeight);
 
@@ -92,8 +98,9 @@ void TextRenderCommand::putParams(std::wstring text
 
         //eg: 一 need a offset in y ax
        
-        float offsetY = calOffsetY(charInfoPtr , paint.textSizeScale);
+        float offsetY = calOffsetY(charInfoPtr , sizeScale);
 
+      
         //v1
         buf[i * attrPerChar + 0] = x;
         buf[i * attrPerChar + 1] = y + offsetY;
@@ -167,7 +174,7 @@ void TextRenderCommand::runCommands(){
     auto shader = engine_->textRenderHelper_->textRenderShader_;
     shader.useShader();
     shader.setUniformMat3("transMat" , engine_->normalMatrix_);
-    shader.setUniformVec4("textColor" , textColor_);
+    shader.setUniformVec4("textColor" , paint_.textColor);
     
     glBindVertexArray(vao_);
     // Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);

@@ -24,7 +24,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
     if(vm->GetEnv((void **) &env, JNI_VERSION_1_4) != JNI_OK) { //从JavaVM获取JNIEnv，一般使用1.4的版本
         return -1;
     }
-    app = std::make_shared<AndroidApplication>();
+//    app = std::make_shared<AndroidApplication>();
     LOGI("jni onload called end...");
     return JNI_VERSION_1_4; //
 }
@@ -32,6 +32,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
 extern "C"
 JNIEXPORT void JNICALL
 Java_panyi_xyz_textrender_NativeBridge_init(JNIEnv *env, jclass clazz) {
+    app = std::make_shared<AndroidApplication>();
     LOGI("app init");
     app->init();
 }
@@ -54,8 +55,8 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_panyi_xyz_textrender_NativeBridge_resize(JNIEnv *env, jclass clazz, jint width, jint height) {
     LOGI("app resize %d , %d" , width , height);
-//    app->viewWidth_ = width;
-//    app->viewHeight_ = height;
+    app->viewWidth_ = width;
+    app->viewHeight_ = height;
     app->onResize(width , height);
 }
 

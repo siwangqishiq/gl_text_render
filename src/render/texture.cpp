@@ -10,6 +10,15 @@ std::shared_ptr<TextureManager> TextureManager::getInstance(){
     return instance_;
 }
 
+void TextureManager::clear(){
+    Logi("texture_manager" , "shader manager clear");
+    for(auto pair : textureBank_){
+        auto texInfoPtr= pair.second;
+        glDeleteTextures(1 , &(texInfoPtr->textureId));
+    }
+    textureBank_.clear();
+}
+
 //将纹理传送至GPU
 std::shared_ptr<TextureInfo> TextureManager::loadTexture(std::string textureFilePath){
     Logi(TAG , "load texture %s" , textureFilePath.c_str());

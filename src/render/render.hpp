@@ -2,12 +2,10 @@
  * @file render.hpp
  * @author panyi
  * @brief 
- * @version 0.1
  * @date 2022-11-17
  * 
  * renderer
  * 
- * @copyright Copyright (c) 2022
  * 
  */
 #pragma once
@@ -24,11 +22,8 @@ class Application;
 class RenderCommand;
 class TextRenderHelper;
 
-struct TextConfig{
-    float size = 1.0f;
-};
-
 class TextRenderCommand;
+struct TextPaint;
 
 class RenderEngine{
 public:
@@ -51,7 +46,10 @@ public:
     void onScreenResize();
 
     //render api
-    void renderText(std::wstring text , float left , float bottom); //文本
+    void renderText(std::wstring text , 
+            float left , 
+            float bottom , 
+            TextPaint &paint); //文本
 
     std::shared_ptr<TextRenderHelper> textRenderHelper_;
 

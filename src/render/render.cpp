@@ -27,6 +27,8 @@ void RenderEngine::render(){
 
 void RenderEngine::free(){
     VRamManager::getInstance().clear();
+    ShaderManager::getInstance()->clear();
+    TextureManager::getInstance()->clear();
 }
 
 void RenderEngine::clearRenderCommands(){
@@ -71,9 +73,10 @@ void RenderEngine::submitRenderCommand(std::shared_ptr<RenderCommand> cmd){
     renderCommandList_.push_back(cmd);
 }
 
-void RenderEngine::renderText(std::wstring text , float left , float bottom){
+void RenderEngine::renderText(std::wstring text , 
+        float left , float bottom , TextPaint &paint){
     auto cmd = fetchTextRenderCommand(this);
-    cmd->putParams(text , left , bottom);
+    cmd->putParams(text , left , bottom , paint);
     submitRenderCommand(cmd);
 }
 

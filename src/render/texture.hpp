@@ -31,6 +31,8 @@ public:
         Logi(TAG , "TextureManager deconstruct");
     }
 
+    void clear();
+
     std::shared_ptr<TextureInfo> acquireTexture(std::string textureFilePath);
 
     std::shared_ptr<TextureInfo> loadTexture(std::string textureFilePath);

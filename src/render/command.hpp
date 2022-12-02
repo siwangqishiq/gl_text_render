@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <iostream>
-#include "glm/vec4.hpp"
+#include "common.hpp"
 
 class RenderEngine;
 struct CharInfo;
@@ -29,12 +29,6 @@ protected:
 
 const float FONT_DEFAULT_SIZE = 64.0f;
 
-struct TextPaint{
-    float textSizeScale = 1.0f;
-    float gapSize = 4.0f;
-    glm::vec4 textColor = glm::vec4(1.0f , 1.0f , 1.0f , 1.0f);
-};
-
 // 文本渲染命令
 class TextRenderCommand : public RenderCommand{
 public:
@@ -47,7 +41,12 @@ public:
                     ,TextPaint &paint = defaultTextPaint);
 
     virtual void runCommands();
+    
+    void setPaint(TextPaint &paint){
+        paint_ = paint;
+    }
 private:
+    TextPaint paint_;
     std::wstring content;
     glm::vec4 textColor_;
 

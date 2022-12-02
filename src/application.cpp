@@ -6,6 +6,7 @@
 #include "render/render.hpp"
 #include "resource/asset_manager.hpp"
 #include "render/texture.hpp"
+#include "render/common.hpp"
 
 void Application::onFree(){
     Logi(TAG , "app onFree");
@@ -96,7 +97,9 @@ void Application::onSceneUpdate(){
     float x = 0.0f;
     float y = 0.0f;
 
-    renderEngine_->renderText(L"你好HelloWorld" , x_ , y_);
+    TextPaint paint1;
+    paint1.textColor = glm::vec4(1.0f , 1.0f , 0.0f , 1.0f);
+    renderEngine_->renderText(L"你好HelloWorld" , x_ , y_ , paint1);
     // for(;y < viewHeight_ ;y += 40.0f){
     //     x = 0.0f;
     //     for(; x < viewWidth_ ; x += 50.0f){
@@ -110,9 +113,13 @@ void Application::onSceneUpdate(){
         y_ += 20.0f;
     }
 
-    renderEngine_->renderText(L"一二三四五六七" , 100, 300 + 80);
-    renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300);
-    renderEngine_->renderText(L"从此君王不早朝" , 100, 300 - 80);
+    TextPaint p2;
+    p2.textSizeScale = 2.0f;
+    p2.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 1.0f);
+    renderEngine_->renderText(L"一二三四五六七" , 100, 300 + 120 , p2);
+    renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300 , p2);
+
+    renderEngine_->renderText(L"从此君王不早朝" , 100, 300 - 40 , paint1);
 }
 
 
