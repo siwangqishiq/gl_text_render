@@ -17,6 +17,7 @@ compile: build_dir \
 		${BUILD_DIR}/main.o \
 		${BUILD_DIR}/application.o \
 		${BUILD_DIR}/json.o \
+		${BUILD_DIR}/utils.o \
 		${BUILD_DIR}/glad.o \
 		${BUILD_DIR}/shader.o \
 		${BUILD_DIR}/triangle.o \
@@ -28,6 +29,9 @@ compile: build_dir \
 
 ${BUILD_DIR}/json.o: ${DIR}/libjson/json.cpp ${DIR}/libjson/json.hpp
 	${CC} -std=${STD} -c ${DIR}/libjson/json.cpp -o ${BUILD_DIR}/json.o
+
+${BUILD_DIR}/utils.o: ${SRC_DIR}/utils.cpp ${SRC_DIR}/utils.hpp
+	${CC} -std=${STD} -c ${SRC_DIR}/utils.cpp -o ${BUILD_DIR}/utils.o
 
 ${BUILD_DIR}/application.o: ${SRC_DIR}/application.hpp ${SRC_DIR}/application.cpp
 	${CC} -std=${STD} -c ${SRC_DIR}/application.cpp -o ${BUILD_DIR}/application.o -I ${INCLUDE_DIR} -I ${SRC_DIR}

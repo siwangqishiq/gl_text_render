@@ -9,7 +9,8 @@
 #include "glheader.hpp"
 
 void RenderEngine::render(){
-    glClearColor(0.0f , 1.0f , 0.0f , 1.0f);
+    // glClearColor(0.0f , 1.0f , 0.0f , 1.0f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // glEnable(GL_DEPTH_TEST);
     
@@ -39,9 +40,6 @@ void RenderEngine::onScreenResize(){
 
 void RenderEngine::init(){
     Logi(TAG , "render engine init start");
-    //打开混合模式
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA);
 
     loadTextRenderResource();//text render init
     // Logi(TAG , "render engine init end");

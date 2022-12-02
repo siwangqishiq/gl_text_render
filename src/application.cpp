@@ -87,7 +87,7 @@ void Application::onTrick(){
 
     long timeEnd = currentTimeMillis();
     auto deltaTime = timeEnd - timeStart;
-    // Logi(TAG , "frame cost time : %ld" , deltaTime);
+    Logi(TAG , "frame cost time : %ld" , deltaTime);
 }
 
 void Application::onSceneUpdate(){
@@ -96,7 +96,7 @@ void Application::onSceneUpdate(){
     float x = 0.0f;
     float y = 0.0f;
 
-    renderEngine_->renderText(L"你好,世界,Hello World" , x_ , y_);
+    renderEngine_->renderText(L"你好HelloWorld" , x_ , y_);
     // for(;y < viewHeight_ ;y += 40.0f){
     //     x = 0.0f;
     //     for(; x < viewWidth_ ; x += 50.0f){
@@ -104,7 +104,7 @@ void Application::onSceneUpdate(){
     //     }
     // }
 
-    x_ += 0.02f;
+    x_ += 0.01f;
     if(x_ > viewWidth_){
         x_ = 0.0f;
         y_ += 20.0f;

@@ -2,6 +2,7 @@
 #include "render.hpp"
 #include "log.hpp"
 #include "vram.hpp"
+#include "../../libjson/json.hpp"
 
 
 TextPaint TextRenderCommand::defaultTextPaint;
@@ -34,13 +35,22 @@ float TextRenderCommand::calOffsetY(std::shared_ptr<CharInfo> charInfo , float s
     }
 }
 
-bool TextRenderCommand::isSymbol(std::wstring &ch){
-    return ch == L"," || ch == L"." || ch == L"!" || ch == L"?" || ch == L"/";
+bool TextRenderCommand::isSymbol(std::wstring ch){
+    // if(ch.empty()){
+    //     return false;
+    // }
+    
+    auto charMap = loadSymbolMap();
+    //Logi("issymbol" , "%d symbolMap %s" ,ch.empty(), ToByteString(ch).c_str());
+    //std::cout << "xx : " << (symbolMap_.find(ch[0]) != symbolMap_.end()) << std::endl;
+    return charMap.find(ch[0]) != charMap.end();
 }
 
 void TextRenderCommand::putParams(std::wstring text 
         ,float left , float bottom
         ,TextPaint &paint){
+    textColor_ = paint.textColor;
+    
     vertexCount_ = 6 * text.length();
     const int attrCount = 3 + 2;
     int requestSize = vertexCount_ * attrCount * sizeof(float);
@@ -150,9 +160,14 @@ void TextRenderCommand::runCommands(){
         return;
     }
 
+    //打开混合模式 文字有透明度
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA);
+
     auto shader = engine_->textRenderHelper_->textRenderShader_;
     shader.useShader();
     shader.setUniformMat3("transMat" , engine_->normalMatrix_);
+    shader.setUniformVec4("textColor" , textColor_);
     
     glBindVertexArray(vao_);
     // Logi("cmmmand" , "vbo id %d vao id %d" , vbo_ , vao_);
