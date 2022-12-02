@@ -72,9 +72,9 @@ void Application::onInit(){
         Logi("timer" , "hello timer1111!");
     } , 5000L);
 
-    getTimer()->schedule([](){
-        Logi("timer" , "hello timer2222!");
-    } , 9000L);
+    getTimer()->scheduleAtFixedRate([](){
+        Logi("timer" , "fixed %lld" , currentTimeMillis());
+    } , 10000L);
     
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
     // Logi("asset" , "test.txt szie: %d \n content: %s" , 

@@ -12,6 +12,7 @@ enum TimerTaskType{
 struct TimerTask{
     int taskId;
     long long shuldRunTime = 0;
+    long long delayTime = 0;
     std::function<void(void)> runnable;
     TimerTaskType type = Once;
 };
@@ -24,10 +25,10 @@ public:
     ~Timer();
 
     //delay 毫秒后 执行
-    long schedule(std::function<void(void)> runnable, long long delay);
+    int schedule(std::function<void(void)> runnable, long long delay);
 
     // 以固定时间 period 毫秒 执行
-    // long scheduleAtFixedRate(std::function<int(void *)> runnable , long period);
+    int scheduleAtFixedRate(std::function<void(void)> runnable ,long long period);
 
     //step a timestamp
     void trick();
@@ -42,6 +43,6 @@ private:
     int genTaskId(){
         return ++idIndex_;
     }
-
-    std::shared_ptr<TimerTask> buildTimerTask(std::function<void(void)> runnable ,long delay);
+    
+    std::shared_ptr<TimerTask> buildTimerTask(std::function<void(void)> runnable ,long long delay ,TimerTaskType taskType);
 };
