@@ -1,5 +1,7 @@
 #include "timer.hpp"
 #include "log.hpp"
+#include <list>
+#include <vector>
 
 Timer::Timer(){
     time_ = currentTimeMillis();
@@ -35,17 +37,25 @@ std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(void)> runna
 void Timer::trick(){
     time_ = currentTimeMillis();
     
+    std::vector<std::list<std::shared_ptr<TimerTask>>::iterator> removeList;
     auto iter = taskList_.begin();
     while(iter != taskList_.end()){
         std::shared_ptr<TimerTask> task = *iter;
-        // Logi("timer" , "task id %d time tasktime %lld cur %lld" ,
-        //     task->taskId , task->shuldRunTime , time_);
         if(time_ >= task->shuldRunTime){
+            // Logi("timer" , "task id %d time tasktime %lld cur %lld" ,
+            // task->taskId , task->shuldRunTime , time_);
             task->runnable();
-            taskList_.erase(iter);
+            removeList.push_back(iter);
+            // taskList_.erase(iter);
         }
         iter++;
     }//end while
+
+    if(!removeList.empty()){
+        for(auto iter : removeList){
+            taskList_.erase(iter);
+        }//end for each
+    }
 }
     
 void Timer::clear(){
