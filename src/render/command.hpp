@@ -28,8 +28,6 @@ protected:
     int vertexCount_;
 };
 
-const float FONT_DEFAULT_SIZE = 64.0f;
-
 // 文本渲染命令
 class TextRenderCommand : public RenderCommand{
 public:

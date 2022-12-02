@@ -98,8 +98,9 @@ void Application::onSceneUpdate(){
     float y = 0.0f;
 
     TextPaint paint1;
-    paint1.textSizeScale = 0.5f;
+    paint1.textSizeScale = 1.5f;
     paint1.textColor = glm::vec4(1.0f , 1.0f , 0.0f , 1.0f);
+    paint1.textStyle = TextStyle::italic;
     renderEngine_->renderText(L"你好HelloWorld" , x_ , y_ , paint1);
     // for(;y < viewHeight_ ;y += 40.0f){
     //     x = 0.0f;

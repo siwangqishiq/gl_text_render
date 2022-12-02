@@ -41,7 +41,7 @@ float TextRenderCommand::calTextStyleItalicOffset(std::shared_ptr<CharInfo> char
     if(charInfo == nullptr || paint.textStyle == TextStyle::normal){
         return 0.0f;
     }else if(paint.textStyle == TextStyle::italic){
-        return (charInfo->width * paint.textSizeScale) / 3.0f;
+        return (FONT_DEFAULT_SIZE * paint.textSizeScale) / 3.0f;
     }
     return 0.0f;
 }
@@ -131,7 +131,7 @@ void TextRenderCommand::putParams(std::wstring text
         buf[i * attrPerChar + 12] = 1.0f;
         buf[i * attrPerChar + 13] = texRight;
         buf[i * attrPerChar + 14] = texTop;
-
+        
         //v4
         buf[i * attrPerChar + 15] = x + offsetX;
         buf[i * attrPerChar + 16] = y + offsetY;

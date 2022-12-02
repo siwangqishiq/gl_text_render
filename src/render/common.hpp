@@ -2,6 +2,7 @@
 
 #include "glm/vec4.hpp"
 
+const float FONT_DEFAULT_SIZE = 64.0f;
 
 enum TextStyle{
     normal = 0,//普通
