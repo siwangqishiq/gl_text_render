@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <iostream>
 #include "common.hpp"
+#include <vector>
 
 class RenderEngine;
 struct CharInfo;
@@ -47,10 +48,13 @@ public:
     }
 private:
     TextPaint paint_;
-    std::wstring content;
     glm::vec4 textColor_;
 
+    const int vertCountPerChar = 6;//一个字符由几个顶点确定
+
     unsigned int fontTextureId_ = -1;
+
+    void buildGlCommands(std::vector<float> &buf);
 
     void fillTextVertData(std::wstring &text , float left , float bottom , 
             TextPaint &paint = defaultTextPaint);
@@ -58,6 +62,8 @@ private:
     float findCharMaxHeight(std::wstring &text , TextPaint &paint = defaultTextPaint);
     
     float calOffsetY(std::shared_ptr<CharInfo> charInfo , float scale = 1.0f);
+
+    float calTextStyleItalicOffset(std::shared_ptr<CharInfo> charInfo , TextPaint &paint);
 
     bool isSymbol(std::wstring ch);
 

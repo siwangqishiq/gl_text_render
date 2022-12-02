@@ -36,6 +36,16 @@ float TextRenderCommand::calOffsetY(std::shared_ptr<CharInfo> charInfo , float s
     }
 }
 
+float TextRenderCommand::calTextStyleItalicOffset(std::shared_ptr<CharInfo> charInfo , TextPaint &paint){
+    // Logi("italic" , "offset %d" , paint.textStyle);
+    if(charInfo == nullptr || paint.textStyle == TextStyle::normal){
+        return 0.0f;
+    }else if(paint.textStyle == TextStyle::italic){
+        return (charInfo->width * paint.textSizeScale) / 3.0f;
+    }
+    return 0.0f;
+}
+
 bool TextRenderCommand::isSymbol(std::wstring ch){
     // if(ch.empty()){
     //     return false;
@@ -51,8 +61,6 @@ void TextRenderCommand::putParams(std::wstring text
         ,float left , float bottom
         ,TextPaint &paint){
     paint_ = paint;
-
-    const int vertCountPerChar = 6;//一个字符由几个顶点确定
 
     vertexCount_ = vertCountPerChar * text.length();
     const int attrCount = 3 + 2;
@@ -82,12 +90,14 @@ void TextRenderCommand::putParams(std::wstring text
         }
 
         fontTextureId_ = charInfoPtr->textureId;
-        
+
         const float sizeScale = paint_.textSizeScale;
         // Logi("text_render" , "size scale %f" , sizeScale);
 
         float charRealWidth = charInfoPtr->width * sizeScale;
         float charRealHeight = charInfoPtr->height * sizeScale;
+
+        float italicOffset = calTextStyleItalicOffset(charInfoPtr , paint_);
         // Logi("text_render" , "x y %f %f charRealWidth %f , charRealHeight %f" ,
         //     x, y ,charRealWidth,charRealHeight);
 
@@ -99,45 +109,45 @@ void TextRenderCommand::putParams(std::wstring text
         //eg: 一 need a offset in y ax
        
         float offsetY = calOffsetY(charInfoPtr , sizeScale);
+        float offsetX = 0.0f;
 
-      
         //v1
-        buf[i * attrPerChar + 0] = x;
+        buf[i * attrPerChar + 0] = x + offsetX;
         buf[i * attrPerChar + 1] = y + offsetY;
         buf[i * attrPerChar + 2] = 1.0f;
         buf[i * attrPerChar + 3] = texLeft;
         buf[i * attrPerChar + 4] = texBottom;
         
         //v2
-        buf[i * attrPerChar + 5] = x + charRealWidth;
+        buf[i * attrPerChar + 5] = x + charRealWidth + offsetX;
         buf[i * attrPerChar + 6] = y + offsetY;
         buf[i * attrPerChar + 7] = 1.0f;
         buf[i * attrPerChar + 8] = texRight;
         buf[i * attrPerChar + 9] = texBottom;
 
         //v3
-        buf[i * attrPerChar + 10] = x + charRealWidth;
+        buf[i * attrPerChar + 10] = x + charRealWidth + offsetX + italicOffset;
         buf[i * attrPerChar + 11] = y + offsetY + charRealHeight;
         buf[i * attrPerChar + 12] = 1.0f;
         buf[i * attrPerChar + 13] = texRight;
         buf[i * attrPerChar + 14] = texTop;
 
         //v4
-        buf[i * attrPerChar + 15] = x;
+        buf[i * attrPerChar + 15] = x + offsetX;
         buf[i * attrPerChar + 16] = y + offsetY;
         buf[i * attrPerChar + 17] = 1.0f;
         buf[i * attrPerChar + 18] = texLeft;
         buf[i * attrPerChar + 19] = texBottom;
 
         //v5
-        buf[i * attrPerChar + 20] = x + charRealWidth;
+        buf[i * attrPerChar + 20] = x + charRealWidth + offsetX + italicOffset;
         buf[i * attrPerChar + 21] = y + offsetY + charRealHeight;
         buf[i * attrPerChar + 22] = 1.0f;
         buf[i * attrPerChar + 23] = texRight;
         buf[i * attrPerChar + 24] = texTop;
 
         //v6
-        buf[i * attrPerChar + 25] = x;
+        buf[i * attrPerChar + 25] = x + offsetX + italicOffset;
         buf[i * attrPerChar + 26] = y + offsetY + charRealHeight;
         buf[i * attrPerChar + 27] = 1.0f;
         buf[i * attrPerChar + 28] = texLeft;
@@ -146,6 +156,10 @@ void TextRenderCommand::putParams(std::wstring text
         x += charRealWidth + paint.gapSize;
     }//end for i
 
+    buildGlCommands(buf);
+}
+
+void TextRenderCommand::buildGlCommands(std::vector<float> &buf){
     glBindVertexArray(vao_);
     // Logi("cmd" , "vboOffset_ = %d",vboOffset_);
     glBindBuffer(GL_ARRAY_BUFFER , vbo_);

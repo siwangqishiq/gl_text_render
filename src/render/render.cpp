@@ -80,6 +80,12 @@ void RenderEngine::renderText(std::wstring text ,
     submitRenderCommand(cmd);
 }
 
+void RenderEngine::renderText(std::wstring text , Rect &showRect , TextPaint &paint){
+    auto cmd = fetchTextRenderCommand(this);
+    
+    submitRenderCommand(cmd);
+}
+
 std::shared_ptr<TextRenderCommand> RenderEngine::fetchTextRenderCommand(RenderEngine *engine){
     // new a new instace 
     // later use pool to reuse

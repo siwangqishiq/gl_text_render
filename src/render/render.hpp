@@ -16,14 +16,13 @@
 #include "glm/matrix.hpp"
 #include "render/shader.hpp"
 #include <unordered_map>
+#include "common.hpp"
 
 
 class Application;
 class RenderCommand;
 class TextRenderHelper;
-
 class TextRenderCommand;
-struct TextPaint;
 
 class RenderEngine{
 public:
@@ -45,17 +44,18 @@ public:
 
     void onScreenResize();
 
-    //render api
-    void renderText(std::wstring text , 
-            float left , 
-            float bottom , 
-            TextPaint &paint); //文本
-
     std::shared_ptr<TextRenderHelper> textRenderHelper_;
 
     //归一化变换矩阵
     glm::mat3 normalMatrix_;
 
+        //render api
+    void renderText(std::wstring text , 
+            float left , 
+            float bottom , 
+            TextPaint &paint); //文本
+
+    void renderText(std::wstring text , Rect &showRect , TextPaint &paint);
 private:
     std::vector<std::shared_ptr<RenderCommand>> renderCommandList_;
 
