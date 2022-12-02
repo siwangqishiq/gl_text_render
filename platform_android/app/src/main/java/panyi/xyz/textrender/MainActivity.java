@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.Timer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 

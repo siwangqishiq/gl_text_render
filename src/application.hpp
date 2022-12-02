@@ -9,6 +9,7 @@
 
 
 class RenderEngine;
+class Timer;
 /**
  * @brief  应用入口
  * 
@@ -45,11 +46,16 @@ public:
     std::shared_ptr<RenderEngine> getRender() {
         return renderEngine_;
     }
+
+    std::shared_ptr<Timer> getTimer();
 private:
     std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
 
     //for test
     std::shared_ptr<Triangle> triangleDemo_ = nullptr;
+
+    //定时器  调度定时任务 或 延时任务
+    std::shared_ptr<Timer> timer_ = nullptr;
 
     float x_ = 0.0f;
     float y_ = 0.0f;

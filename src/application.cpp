@@ -7,9 +7,13 @@
 #include "resource/asset_manager.hpp"
 #include "render/texture.hpp"
 #include "render/common.hpp"
+#include "widget/timer.hpp"
 
 void Application::onFree(){
     Logi(TAG , "app onFree");
+    if(timer_ != nullptr){
+        timer_->clear();
+    }
     // triangleDemo_->free();
     if(renderEngine_ != nullptr){
         renderEngine_->free();
@@ -19,6 +23,7 @@ void Application::onFree(){
 void Application::init(){
     onInit();
 }
+
 
 void Application::update(){
     onTrick();
@@ -42,6 +47,14 @@ void Application::onResize(int w , int h){
     }
 }
 
+std::shared_ptr<Timer> Application::getTimer(){
+    if(timer_ == nullptr){
+        timer_ = std::make_shared<Timer>();
+    }
+
+    return timer_;
+}
+
 void Application::onInit(){
     Logi(TAG , "app onInit");
 
@@ -54,6 +67,14 @@ void Application::onInit(){
 
     triangleDemo_ = std::make_shared<Triangle>();
     triangleDemo_->init();
+
+    getTimer()->schedule([](){
+        Logi("timer" , "hello timer1111!");
+    } , 5000L);
+
+    getTimer()->schedule([](){
+        Logi("timer" , "hello timer2222!");
+    } , 9000L);
     
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
     // Logi("asset" , "test.txt szie: %d \n content: %s" , 
@@ -80,12 +101,16 @@ void Application::onTrick(){
     //user logic and draw
     onSceneUpdate();
 
+    //定时器triker
+    if(timer_ != nullptr){
+        timer_->trick();
+    }
+
     //gl commands run
     renderEngine_->render();
     
     // for test
     // triangleDemo_->trick(renderEngine_->normalMatrix_);
-
     long timeEnd = currentTimeMillis();
     auto deltaTime = timeEnd - timeStart;
     // Logi(TAG , "frame cost time : %ld" , deltaTime);

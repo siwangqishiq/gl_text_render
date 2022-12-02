@@ -25,7 +25,8 @@ compile: build_dir \
 		${BUILD_DIR}/command.o \
 		${BUILD_DIR}/vram.o \
 		${BUILD_DIR}/asset_manager.o \
-		${BUILD_DIR}/texture.o 
+		${BUILD_DIR}/texture.o \
+		${BUILD_DIR}/timer.o 
 
 ${BUILD_DIR}/json.o: ${DIR}/libjson/json.cpp ${DIR}/libjson/json.hpp
 	${CC} -std=${STD} -c ${DIR}/libjson/json.cpp -o ${BUILD_DIR}/json.o
@@ -50,6 +51,10 @@ ${BUILD_DIR}/triangle.o:${SRC_DIR}/render/triangle.cpp \
 						${ASSET_DIR}/shader/triangle_vert.glsl \
 						${ASSET_DIR}/shader/triangle_frag.glsl 
 	${CC} -std=${STD} -c ${SRC_DIR}/render/triangle.cpp -o ${BUILD_DIR}/triangle.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 
+
+${BUILD_DIR}/timer.o:${SRC_DIR}/widget/timer.cpp \
+						${SRC_DIR}/widget/timer.hpp 
+	${CC} -std=${STD} -c ${SRC_DIR}/widget/timer.cpp -o ${BUILD_DIR}/timer.o -I ${INCLUDE_DIR} -I ${SRC_DIR} 
 
 ${BUILD_DIR}/vram.o:${SRC_DIR}/render/vram.cpp ${SRC_DIR}/render/vram.hpp
 	${CC} -std=${STD} -c ${SRC_DIR}/render/vram.cpp -o ${BUILD_DIR}/vram.o -I ${INCLUDE_DIR} -I ${SRC_DIR}

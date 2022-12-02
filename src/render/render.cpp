@@ -82,7 +82,7 @@ void RenderEngine::renderText(std::wstring text ,
 
 void RenderEngine::renderText(std::wstring text , Rect &showRect , TextPaint &paint){
     auto cmd = fetchTextRenderCommand(this);
-    
+
     submitRenderCommand(cmd);
 }
 

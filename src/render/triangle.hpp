@@ -12,7 +12,7 @@ public:
     void init();
     void trick(glm::mat3 &normalMat);
     void free();
-
+    
 private:
     // for test
     GLuint vao;
