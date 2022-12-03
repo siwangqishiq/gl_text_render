@@ -14,20 +14,20 @@ Timer::~Timer(){
 }
 
 //delay 毫秒后 执行
-int Timer::schedule(std::function<void(void)> runnable,long long delay){
+int Timer::schedule(std::function<void(Application *)> runnable,long long delay){
     auto resultTask = buildTimerTask(runnable , delay , TimerTaskType::Once);
     taskList_.push_back(resultTask);
     return resultTask->taskId;
 }
 
-int Timer::scheduleAtFixedRate(std::function<void(void)> runnable ,long long period){
+int Timer::scheduleAtFixedRate(std::function<void(Application *)> runnable ,long long period){
     auto resultTask = buildTimerTask(runnable , period , FixedRate);
     taskList_.push_back(resultTask);
     return resultTask->taskId;
 }
 
 
-std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(void)> runnable,long long delay ,TimerTaskType taskType){
+std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(Application *)> runnable,long long delay ,TimerTaskType taskType){
     auto timeTask = std::make_shared<TimerTask>();
 
     timeTask->taskId = genTaskId();
@@ -43,7 +43,7 @@ std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(void)> runna
 // long Timer::scheduleAtFixedRate(std::function<int(void *)> runnable , long period);
 
 //step a timestamp
-void Timer::trick(){
+void Timer::trick(Application *app){
     time_ = currentTimeMillis();
     
     std::vector<std::list<std::shared_ptr<TimerTask>>::iterator> removeList;
@@ -53,7 +53,7 @@ void Timer::trick(){
         if(time_ >= task->shuldRunTime){
             // Logi("timer" , "task id %d time tasktime %lld cur %lld" ,
             // task->taskId , task->shuldRunTime , time_);
-            task->runnable();
+            task->runnable(app);
             if(task->type == Once){
                 removeList.push_back(iter);
             }else if(task->type == FixedRate){

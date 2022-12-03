@@ -68,13 +68,24 @@ void Application::onInit(){
     triangleDemo_ = std::make_shared<Triangle>();
     triangleDemo_->init();
 
-    getTimer()->schedule([](){
+    getTimer()->schedule([this](Application *app){
         Logi("timer" , "hello timer1111!");
     } , 5000L);
 
-    getTimer()->scheduleAtFixedRate([](){
+
+    getTimer()->scheduleAtFixedRate([this](Application *app){
         Logi("timer" , "fixed %lld" , currentTimeMillis());
-    } , 10000L);
+
+        // auto render = app->getRender();
+
+        // TextPaint paint;
+        // paint.textSizeScale = 1.0f;
+        // render->renderText(std::to_wstring(app->mIndex_++) , 0 , 0 , paint);
+        app->mIndex_++;
+    } , 1000L);
+
+    // TextPaint paint;
+    // renderEngine_->renderText(std::to_wstring(mIndex_++) , 0 , 0 , paint);
     
     // auto fileContent = AssetManager::getInstance()->readTextFile("test.txt");
     // Logi("asset" , "test.txt szie: %d \n content: %s" , 
@@ -103,7 +114,7 @@ void Application::onTrick(){
 
     //定时器triker
     if(timer_ != nullptr){
-        timer_->trick();
+        timer_->trick(this);
     }
 
     //gl commands run
@@ -152,6 +163,10 @@ void Application::onSceneUpdate(){
     p3.textColor = glm::vec4(1.0f ,1.0f , 0.0f , 1.0f);
     p3.textStyle = TextStyle::italic;
     renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300 , p3);
+
+
+    TextPaint paint;
+    renderEngine_->renderText(std::to_wstring(mIndex_) , 0 , 0 , paint);
 }
 
 

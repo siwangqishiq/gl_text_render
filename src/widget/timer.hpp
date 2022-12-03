@@ -3,6 +3,9 @@
 #include <functional>
 #include <list>
 #include <memory>
+// #include "application.hpp"
+
+class Application;
 
 enum TimerTaskType{
     Once, //仅运行一次
@@ -13,7 +16,7 @@ struct TimerTask{
     int taskId;
     long long shuldRunTime = 0;
     long long delayTime = 0;
-    std::function<void(void)> runnable;
+    std::function<void(Application *)> runnable;
     TimerTaskType type = Once;
 };
 
@@ -25,13 +28,13 @@ public:
     ~Timer();
 
     //delay 毫秒后 执行
-    int schedule(std::function<void(void)> runnable, long long delay);
+    int schedule(std::function<void(Application *)> runnable, long long delay);
 
     // 以固定时间 period 毫秒 执行
-    int scheduleAtFixedRate(std::function<void(void)> runnable ,long long period);
+    int scheduleAtFixedRate(std::function<void(Application *)> runnable ,long long period);
 
     //step a timestamp
-    void trick();
+    void trick(Application *appContext);
     
     void clear();
 private:
@@ -44,5 +47,5 @@ private:
         return ++idIndex_;
     }
     
-    std::shared_ptr<TimerTask> buildTimerTask(std::function<void(void)> runnable ,long long delay ,TimerTaskType taskType);
+    std::shared_ptr<TimerTask> buildTimerTask(std::function<void(Application *)> runnable ,long long delay ,TimerTaskType taskType);
 };

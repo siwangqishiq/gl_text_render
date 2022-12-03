@@ -59,4 +59,6 @@ private:
 
     float x_ = 0.0f;
     float y_ = 0.0f;
+
+    int mIndex_ = 1;
 };
