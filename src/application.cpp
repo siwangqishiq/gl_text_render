@@ -70,19 +70,17 @@ void Application::onInit(){
 
     getTimer()->schedule([this](Application *app){
         Logi("timer" , "hello timer1111!");
-    } , 5000L);
+        app->showNumber = false;
+    } , 20 * 1000L);
 
 
     getTimer()->scheduleAtFixedRate([this](Application *app){
         Logi("timer" , "fixed %lld" , currentTimeMillis());
-
-        // auto render = app->getRender();
-
-        // TextPaint paint;
-        // paint.textSizeScale = 1.0f;
-        // render->renderText(std::to_wstring(app->mIndex_++) , 0 , 0 , paint);
-        app->mIndex_++;
+        
+        app->mIndex++;
     } , 1000L);
+
+    showNumber = true;
 
     // TextPaint paint;
     // renderEngine_->renderText(std::to_wstring(mIndex_++) , 0 , 0 , paint);
@@ -103,7 +101,7 @@ void Application::onInit(){
 void Application::onTrick(){
     // Log(TAG , "app trick");
 
-    long timeStart = currentTimeMillis();
+    long long timeStart = currentTimeMillis();
     
     if(renderEngine_ == nullptr){
         return;
@@ -136,12 +134,13 @@ void Application::onSceneUpdate(){
     TextPaint paint1;
     paint1.textSizeScale = 1.5f;
     paint1.textColor = glm::vec4(1.0f , 1.0f , 0.0f , 1.0f);
-    paint1.textStyle = TextStyle::italic;
+    // paint1.textStyle = TextStyle::italic;
     renderEngine_->renderText(L"你好HelloWorld" , x_ , y_ , paint1);
     // for(;y < viewHeight_ ;y += 40.0f){
     //     x = 0.0f;
     //     for(; x < viewWidth_ ; x += 50.0f){
-    //         renderEngine_->renderText(L"梅西" , x , y);
+    //         paint1.textSizeScale = 0.3f;
+    //         renderEngine_->renderText(L"世界杯" , x , y ,paint1);
     //     }
     // }
 
@@ -164,9 +163,12 @@ void Application::onSceneUpdate(){
     p3.textStyle = TextStyle::italic;
     renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300 , p3);
 
-
-    TextPaint paint;
-    renderEngine_->renderText(std::to_wstring(mIndex_) , 0 , 0 , paint);
+    if(showNumber){
+        TextPaint p4;
+        p4.textSizeScale = 2.0f;
+        p4.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 0.5f);
+        renderEngine_->renderText(std::to_wstring(mIndex) , 0, 0 , p4);
+    }
 }
 
 
