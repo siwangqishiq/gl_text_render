@@ -68,19 +68,21 @@ void Application::onInit(){
     triangleDemo_ = std::make_shared<Triangle>();
     triangleDemo_->init();
 
-    getTimer()->schedule([this](Application *app){
-        Logi("timer" , "hello timer1111!");
-    } , 20 * 1000L);
+    // getTimer()->schedule([this](Application *app){
+    //     Logi("timer" , "hello timer1111!");
+    // } , 20 * 1000L);
 
 
-    fixedRateTaskId = getTimer()->scheduleAtFixedRate([this](Application *app){
-        Logi("timer" , "fixed %lld" , currentTimeMillis());
-        app->mIndex++;
-        int rmId = app->fixedRateTaskId;
-        if(app->mIndex >= 10){
-            app->getTimer()->removeScheduleTask(rmId);
-        }
-    } , 1000L);
+    // fixedRateTaskId = getTimer()->scheduleAtFixedRate([this](Application *app){
+    //     Logi("timer" , "fixed %lld" , currentTimeMillis());
+    //     app->mIndex++;
+    //     int rmId = app->fixedRateTaskId;
+    //     if(app->mIndex >= 10){
+    //         app->getTimer()->removeScheduleTask(rmId);
+    //     }
+    // } , 1000L);
+
+
 
     showNumber = true;
 
@@ -98,6 +100,16 @@ void Application::onInit(){
     
     // auto info1 = TextureManager::getInstance()->acquireTexture("text/font_texture_0.png");
     // auto info2 = TextureManager::getInstance()->acquireTexture("text/font_texture_1.png");
+
+    onCreate();
+}
+
+void Application::onCreate(){
+    getTimer()->scheduleAtFixedRate([this](Application *app){
+        Logi("application" , "fps : %d" , frameCount_);
+        showFps = frameCount_;
+        frameCount_ = 0;
+    } , 1000L);
 }
 
 void Application::onTrick(){
@@ -124,6 +136,7 @@ void Application::onTrick(){
     // triangleDemo_->trick(renderEngine_->normalMatrix_);
     long timeEnd = currentTimeMillis();
     auto deltaTime = timeEnd - timeStart;
+    frameCount_++;
     // Logi(TAG , "frame cost time : %ld" , deltaTime);
 }
 
@@ -169,7 +182,7 @@ void Application::onSceneUpdate(){
         TextPaint p4;
         p4.textSizeScale = 2.0f;
         p4.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 0.5f);
-        renderEngine_->renderText(std::to_wstring(mIndex) , 0, 0 , p4);
+        renderEngine_->renderText(std::to_wstring(showFps) , 0, 0 , p4);
     }
 }
 

@@ -30,6 +30,8 @@ public:
 
     void onFree();
 
+    void onCreate();
+
     virtual void onSceneUpdate();
     
     virtual void onResize(int width , int height);
@@ -50,6 +52,8 @@ public:
     std::shared_ptr<Timer> getTimer();
 
     int fixedRateTaskId = -1;
+
+    int frameCount_ = 0;
 private:
     std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
 
@@ -65,4 +69,5 @@ private:
     float mScale = 1.0f;
     int mIndex = 1;
     bool showNumber = false; 
+    int showFps = 0;
 };
