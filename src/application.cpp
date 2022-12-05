@@ -70,14 +70,16 @@ void Application::onInit(){
 
     getTimer()->schedule([this](Application *app){
         Logi("timer" , "hello timer1111!");
-        app->showNumber = false;
     } , 20 * 1000L);
 
 
-    getTimer()->scheduleAtFixedRate([this](Application *app){
+    fixedRateTaskId = getTimer()->scheduleAtFixedRate([this](Application *app){
         Logi("timer" , "fixed %lld" , currentTimeMillis());
-        
         app->mIndex++;
+        int rmId = app->fixedRateTaskId;
+        if(app->mIndex >= 10){
+            app->getTimer()->removeScheduleTask(rmId);
+        }
     } , 1000L);
 
     showNumber = true;

@@ -48,6 +48,8 @@ public:
     }
 
     std::shared_ptr<Timer> getTimer();
+
+    int fixedRateTaskId = -1;
 private:
     std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
 

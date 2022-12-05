@@ -26,6 +26,24 @@ int Timer::scheduleAtFixedRate(std::function<void(Application *)> runnable ,long
     return resultTask->taskId;
 }
 
+//移除延时任务
+bool Timer::removeScheduleTask(int rmTaskId){
+    std::list<std::shared_ptr<TimerTask>>::iterator removeIter;
+    auto iter = taskList_.begin();
+    bool isDelete = false;
+    
+    while(iter != taskList_.end()){
+        std::shared_ptr<TimerTask> task = *iter;
+        if(task->taskId == rmTaskId){
+            taskList_.erase(iter);  
+            isDelete = true;
+            break;
+        }
+        iter++;
+    }//end while
+    return isDelete;
+}
+
 
 std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(Application *)> runnable,long long delay ,TimerTaskType taskType){
     auto timeTask = std::make_shared<TimerTask>();
@@ -39,8 +57,6 @@ std::shared_ptr<TimerTask> Timer::buildTimerTask(std::function<void(Application 
 }
 
 // 以固定时间 period 毫秒 执行
-
-// long Timer::scheduleAtFixedRate(std::function<int(void *)> runnable , long period);
 
 //step a timestamp
 void Timer::trick(Application *app){

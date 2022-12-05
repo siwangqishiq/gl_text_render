@@ -33,6 +33,9 @@ public:
     // 以固定时间 period 毫秒 执行
     int scheduleAtFixedRate(std::function<void(Application *)> runnable ,long long period);
 
+    //移除定时任务
+    bool removeScheduleTask(int taskId);
+
     //step a timestamp
     void trick(Application *appContext);
     
