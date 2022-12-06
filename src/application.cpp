@@ -115,8 +115,9 @@ void Application::onCreate(){
 void Application::onTrick(){
     // Log(TAG , "app trick");
 
+    Logi(TAG , "getLastFrameDeltaTimeMirco = %lld" , getLastFrameDeltaTime());
+
     long long timeStart = currentTimeMillis();
-    
     if(renderEngine_ == nullptr){
         return;
     }
@@ -134,9 +135,12 @@ void Application::onTrick(){
     
     // for test
     // triangleDemo_->trick(renderEngine_->normalMatrix_);
+
+    timeStamp_ = currentTimeMicro();
     long timeEnd = currentTimeMillis();
     auto deltaTime = timeEnd - timeStart;
     frameCount_++;
+
     // Logi(TAG , "frame cost time : %ld" , deltaTime);
 }
 
@@ -184,6 +188,13 @@ void Application::onSceneUpdate(){
         p4.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 0.5f);
         renderEngine_->renderText(std::to_wstring(showFps) , 0, 0 , p4);
     }
+}
+
+long long Application::getLastFrameDeltaTime(){
+    if(timeStamp_ <= 0 ){
+        return 0L;
+    }
+    return currentTimeMicro() - timeStamp_;
 }
 
 

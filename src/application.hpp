@@ -54,6 +54,10 @@ public:
     int fixedRateTaskId = -1;
 
     int frameCount_ = 0;
+
+    //获取上一帧经过的时间
+    long long getLastFrameDeltaTime();
+    long long timeStamp_ = -1L;
 private:
     std::shared_ptr<RenderEngine> renderEngine_ = nullptr;
 
