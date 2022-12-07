@@ -81,8 +81,12 @@ void RenderEngine::renderText(std::wstring text ,
 }
 
 void RenderEngine::renderText(std::wstring text , Rect &showRect , TextPaint &paint){
-    auto cmd = fetchTextRenderCommand(this);
+    if(text.empty()){
+        return;
+    }
 
+    auto cmd = fetchTextRenderCommand(this);
+    cmd->putTextParamsByRectLimit(text , showRect , paint);
     submitRenderCommand(cmd);
 }
 
@@ -140,6 +144,8 @@ void TextRenderHelper::buildTextCharConfig(){
         // Logi("text_render" , "texture name  %s" , textureName.c_str());
         auto textureInfo = TextureManager::getInstance()->acquireTexture("text/" + textureName);
         info->textureId = textureInfo->textureId;
+
+        mainTextureId_ = info->textureId;
         // // Logi("text_render" , "textureId : %d" , info->textureId);
         charInfoMaps_.insert(std::make_pair<>(info->value[0] , info));
     }//end for i

@@ -114,14 +114,13 @@ void Application::onCreate(){
 
 void Application::onTrick(){
     // Log(TAG , "app trick");
-
-    Logi(TAG , "getLastFrameDeltaTimeMirco = %lld" , getLastFrameDeltaTime());
+    // Logi(TAG , "getLastFrameDeltaTimeMirco = %lld" , getLastFrameDeltaTime());
 
     long long timeStart = currentTimeMillis();
     if(renderEngine_ == nullptr){
         return;
     }
-
+    
     //user logic and draw
     onSceneUpdate();
 
@@ -154,7 +153,7 @@ void Application::onSceneUpdate(){
     paint1.textSizeScale = 1.5f;
     paint1.textColor = glm::vec4(1.0f , 1.0f , 0.0f , 1.0f);
     // paint1.textStyle = TextStyle::italic;
-    renderEngine_->renderText(L"你好HelloWorld" , x_ , y_ , paint1);
+    renderEngine_->renderText(L"你好世界HelloWorld" , x_ , y_ , paint1);
     // for(;y < viewHeight_ ;y += 40.0f){
     //     x = 0.0f;
     //     for(; x < viewWidth_ ; x += 50.0f){
@@ -162,30 +161,31 @@ void Application::onSceneUpdate(){
     //         renderEngine_->renderText(L"世界杯" , x , y ,paint1);
     //     }
     // }
-
-    x_ += 0.01f;
+    float velocity = 0.0001f;
+    float deltaTime = getLastFrameDeltaTime();
+    x_ += velocity * deltaTime;
     if(x_ > viewWidth_){
         x_ = 0.0f;
         y_ += 20.0f;
     }
 
-    TextPaint p1;
-    p1.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 1.0f);
-    renderEngine_->renderText(L"堆枕乌云堕翠翘" , 100, 300 + 100 + 100, p1);
+    // TextPaint p1;
+    // p1.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 1.0f);
+    // renderEngine_->renderText(L"堆枕乌云堕翠翘" , 100, 300 + 100 + 100, p1);
 
-    TextPaint p2;
-    p2.textColor = glm::vec4(0.0f ,1.0f , 0.0f , 1.0f);
-    renderEngine_->renderText(L"那更春来,玉减香消" , 100, 300 + 100 , p2);
+    // TextPaint p2;
+    // p2.textColor = glm::vec4(0.0f ,1.0f , 0.0f , 1.0f);
+    // renderEngine_->renderText(L"那更春来,玉减香消" , 100, 300 + 100 , p2);
 
-    TextPaint p3;
-    p3.textColor = glm::vec4(1.0f ,1.0f , 0.0f , 1.0f);
-    p3.textStyle = TextStyle::italic;
-    renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300 , p3);
+    // TextPaint p3;
+    // p3.textColor = glm::vec4(1.0f ,1.0f , 0.0f , 1.0f);
+    // p3.textStyle = TextStyle::italic;
+    // renderEngine_->renderText(L"嬛嬛一袅楚宫腰" , 100, 300 , p3);
 
     if(showNumber){
         TextPaint p4;
-        p4.textSizeScale = 2.0f;
-        p4.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 0.5f);
+        p4.textSizeScale = 1.0f;
+        p4.textColor = glm::vec4(1.0f ,0.0f , 0.0f , 1.0f);
         renderEngine_->renderText(std::to_wstring(showFps) , 0, 0 , p4);
     }
 }

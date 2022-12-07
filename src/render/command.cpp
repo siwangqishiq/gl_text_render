@@ -47,28 +47,28 @@ float TextRenderCommand::calTextStyleItalicOffset(std::shared_ptr<CharInfo> char
 }
 
 bool TextRenderCommand::isSymbol(std::wstring ch){
-    // if(ch.empty()){
-    //     return false;
-    // }
-    
     auto charMap = loadSymbolMap();
     //Logi("issymbol" , "%d symbolMap %s" ,ch.empty(), ToByteString(ch).c_str());
     //std::cout << "xx : " << (symbolMap_.find(ch[0]) != symbolMap_.end()) << std::endl;
     return charMap.find(ch[0]) != charMap.end();
 }
 
-void TextRenderCommand::putParams(std::wstring text 
-        ,float left , float bottom
-        ,TextPaint &paint){
-    paint_ = paint;
-
-    vertexCount_ = vertCountPerChar * text.length();
-    const int attrCount = 3 + 2;
-    int requestSize = vertexCount_ * attrCount * sizeof(float);
+unsigned int TextRenderCommand::allocatorVRamForText(int textLength){
+    vertexCount_ = vertCountPerChar_ * textLength;
+    int requestSize = vertexCount_ * attrCount_ * sizeof(float);
     int allocateSize = 0;
     // Logi("command" , "allocator size = %d" , requestSize);
     VRamManager::getInstance().fetchVideoMemory(requestSize , 
         vbo_ ,vao_, vboOffset_ , allocateSize);
+    return vbo_;
+}
+
+void TextRenderCommand::putParams(std::wstring text 
+        ,float left , float bottom
+        ,TextPaint &paint){
+    paint_ = paint;
+    fontTextureId_ = engine_->textRenderHelper_->mainTextureId_;
+    allocatorVRamForText(text.length());
 
     if(vbo_ <= 0){
         return;
@@ -78,86 +78,129 @@ void TextRenderCommand::putParams(std::wstring text
     float x = left;
     float y = bottom;
 
-    std::vector<float> buf(vertexCount_ * attrCount);
-    const int attrPerChar = attrCount * vertCountPerChar;
-
     auto textRenderHelper = engine_->textRenderHelper_;
+    std::vector<float> buf(vertexCount_ * attrCount_);
+
     for(int i = 0 ; i < text.length() ;i++){
         wchar_t ch = text[i];
         auto charInfoPtr = textRenderHelper->findCharInfo(ch);
         if(charInfoPtr == nullptr){
             continue;
         }
-
-        fontTextureId_ = charInfoPtr->textureId;
-
-        const float sizeScale = paint_.textSizeScale;
-        // Logi("text_render" , "size scale %f" , sizeScale);
-
-        float charRealWidth = charInfoPtr->width * sizeScale;
-        float charRealHeight = charInfoPtr->height * sizeScale;
-
-        float italicOffset = calTextStyleItalicOffset(charInfoPtr , paint_);
-        // Logi("text_render" , "x y %f %f charRealWidth %f , charRealHeight %f" ,
-        //     x, y ,charRealWidth,charRealHeight);
-
-        float texLeft = charInfoPtr->textureCoords[0];
-        float texTop = charInfoPtr->textureCoords[1];
-        float texRight = charInfoPtr->textureCoords[2];
-        float texBottom = charInfoPtr->textureCoords[3];
-
-        //eg: 一 need a offset in y ax
-       
-        float offsetY = calOffsetY(charInfoPtr , sizeScale);
-        float offsetX = 0.0f;
-
-        //v1
-        buf[i * attrPerChar + 0] = x + offsetX;
-        buf[i * attrPerChar + 1] = y + offsetY;
-        buf[i * attrPerChar + 2] = 1.0f;
-        buf[i * attrPerChar + 3] = texLeft;
-        buf[i * attrPerChar + 4] = texBottom;
         
-        //v2
-        buf[i * attrPerChar + 5] = x + charRealWidth + offsetX;
-        buf[i * attrPerChar + 6] = y + offsetY;
-        buf[i * attrPerChar + 7] = 1.0f;
-        buf[i * attrPerChar + 8] = texRight;
-        buf[i * attrPerChar + 9] = texBottom;
-
-        //v3
-        buf[i * attrPerChar + 10] = x + charRealWidth + offsetX + italicOffset;
-        buf[i * attrPerChar + 11] = y + offsetY + charRealHeight;
-        buf[i * attrPerChar + 12] = 1.0f;
-        buf[i * attrPerChar + 13] = texRight;
-        buf[i * attrPerChar + 14] = texTop;
-        
-        //v4
-        buf[i * attrPerChar + 15] = x + offsetX;
-        buf[i * attrPerChar + 16] = y + offsetY;
-        buf[i * attrPerChar + 17] = 1.0f;
-        buf[i * attrPerChar + 18] = texLeft;
-        buf[i * attrPerChar + 19] = texBottom;
-
-        //v5
-        buf[i * attrPerChar + 20] = x + charRealWidth + offsetX + italicOffset;
-        buf[i * attrPerChar + 21] = y + offsetY + charRealHeight;
-        buf[i * attrPerChar + 22] = 1.0f;
-        buf[i * attrPerChar + 23] = texRight;
-        buf[i * attrPerChar + 24] = texTop;
-
-        //v6
-        buf[i * attrPerChar + 25] = x + offsetX + italicOffset;
-        buf[i * attrPerChar + 26] = y + offsetY + charRealHeight;
-        buf[i * attrPerChar + 27] = 1.0f;
-        buf[i * attrPerChar + 28] = texLeft;
-        buf[i * attrPerChar + 29] = texTop;
-
-        x += charRealWidth + paint.gapSize;
+        putVertexDataToBuf(buf , i , x , y , charInfoPtr , paint);
+        x += charInfoPtr->width * paint.textSizeScale + paint.gapSize;
     }//end for i
 
     buildGlCommands(buf);
 }
+
+void TextRenderCommand::putTextParamsByRectLimit(std::wstring &text , Rect &limitRect, 
+            TextPaint &paint){
+    if(text.empty()){
+        return;
+    }
+    paint_ = paint;
+    fontTextureId_ = engine_->textRenderHelper_->mainTextureId_;
+    allocatorVRamForText(text.length());
+
+    auto textRenderHelper = engine_->textRenderHelper_;
+    //todo 文本排版
+    const float limitWidth = limitRect.width;
+    const float sizeScale = paint_.textSizeScale;
+    const float charMaxHeight = CHAR_DEFAULT_HEIGHT * sizeScale;
+
+    int pos = 0;
+
+    float x = 0.0f;
+    float y = charMaxHeight;
+    float thisLineLeft = 0.0f;
+
+    std::vector<float> buf(vertexCount_ * attrCount_);
+    while(pos < text.size()){
+        auto ch = text[pos];
+        auto charInfoPtr = textRenderHelper->findCharInfo(ch);
+        if(charInfoPtr != nullptr){
+            float charRealWidth = charInfoPtr->width * sizeScale;
+            x += (charRealWidth + paint.gapSize);
+            
+            if(x > limitWidth){ //需要新起一行
+                x = 0.0f;
+                y += charMaxHeight;
+            }
+        }
+        
+        pos++;
+    }//end while
+}
+
+void TextRenderCommand::putVertexDataToBuf(std::vector<float> &buf, 
+        int index,float x ,float y,
+        std::shared_ptr<CharInfo> charInfoPtr ,TextPaint &paint){
+    const int attrPerChar = attrCount_ * vertCountPerChar_;
+    const float sizeScale = paint_.textSizeScale;
+    // Logi("text_render" , "size scale %f" , sizeScale);
+
+    float charRealWidth = charInfoPtr->width * sizeScale;
+    float charRealHeight = charInfoPtr->height * sizeScale;
+
+    float italicOffset = calTextStyleItalicOffset(charInfoPtr , paint_);
+    // Logi("text_render" , "x y %f %f charRealWidth %f , charRealHeight %f" ,
+    //     x, y ,charRealWidth,charRealHeight);
+
+    float texLeft = charInfoPtr->textureCoords[0];
+    float texTop = charInfoPtr->textureCoords[1];
+    float texRight = charInfoPtr->textureCoords[2];
+    float texBottom = charInfoPtr->textureCoords[3];
+
+    //eg: 一 need a offset in y ax
+    float offsetY = calOffsetY(charInfoPtr , sizeScale);
+    float offsetX = 0.0f;
+
+    int offset = index * attrPerChar;
+    //v1
+    buf[offset + 0] = x + offsetX;
+    buf[offset + 1] = y + offsetY;
+    buf[offset + 2] = 1.0f;
+    buf[offset + 3] = texLeft;
+    buf[offset + 4] = texBottom;
+    
+    //v2
+    buf[offset + 5] = x + charRealWidth + offsetX;
+    buf[offset + 6] = y + offsetY;
+    buf[offset + 7] = 1.0f;
+    buf[offset + 8] = texRight;
+    buf[offset + 9] = texBottom;
+
+    //v3
+    buf[offset + 10] = x + charRealWidth + offsetX + italicOffset;
+    buf[offset + 11] = y + offsetY + charRealHeight;
+    buf[offset + 12] = 1.0f;
+    buf[offset + 13] = texRight;
+    buf[offset + 14] = texTop;
+    
+    //v4
+    buf[offset + 15] = x + offsetX;
+    buf[offset + 16] = y + offsetY;
+    buf[offset + 17] = 1.0f;
+    buf[offset + 18] = texLeft;
+    buf[offset + 19] = texBottom;
+
+    //v5
+    buf[offset + 20] = x + charRealWidth + offsetX + italicOffset;
+    buf[offset + 21] = y + offsetY + charRealHeight;
+    buf[offset + 22] = 1.0f;
+    buf[offset + 23] = texRight;
+    buf[offset + 24] = texTop;
+
+    //v6
+    buf[offset + 25] = x + offsetX + italicOffset;
+    buf[offset + 26] = y + offsetY + charRealHeight;
+    buf[offset + 27] = 1.0f;
+    buf[offset + 28] = texLeft;
+    buf[offset + 29] = texTop;
+}
+
 
 void TextRenderCommand::buildGlCommands(std::vector<float> &buf){
     glBindVertexArray(vao_);
@@ -174,7 +217,6 @@ void TextRenderCommand::buildGlCommands(std::vector<float> &buf){
     glBindBuffer(GL_ARRAY_BUFFER , 0);
     glBindVertexArray(0);
 }
-
 
 void TextRenderCommand::runCommands(){
     if(fontTextureId_ <= 0){

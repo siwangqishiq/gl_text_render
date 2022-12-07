@@ -49,13 +49,16 @@ public:
     //归一化变换矩阵
     glm::mat3 normalMatrix_;
 
-        //render api
+    //render api
     void renderText(std::wstring text , 
             float left , 
             float bottom , 
             TextPaint &paint); //文本
 
-    void renderText(std::wstring text , Rect &showRect , TextPaint &paint);
+    //将文本包裹在一个矩形内渲染
+    void renderText(std::wstring text , 
+            Rect &showRect , 
+            TextPaint &paint);
 private:
     std::vector<std::shared_ptr<RenderCommand>> renderCommandList_;
 
@@ -77,6 +80,8 @@ struct CharInfo{
     unsigned int textureId;
 };
 
+//字符默认高度
+const float CHAR_DEFAULT_HEIGHT = 64.0f;
 const float SPACE_WIDTH = 16.0f;
 
 class TextRenderHelper{
@@ -86,6 +91,8 @@ public:
     Shader textRenderShader_;
 
     std::shared_ptr<CharInfo> findCharInfo(wchar_t &ch);
+
+    unsigned int mainTextureId_;
 private:
     void buildTextCharConfig();
 
